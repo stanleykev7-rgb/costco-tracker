@@ -189,7 +189,7 @@
 <script>
 const GITHUB_USERNAME = "stanleykev7-rgb";
 const GITHUB_REPO = "costco-tracker";
-const RAW_URL = `https://raw.githubusercontent.com/${GITHUB_USERNAME}/${GITHUB_REPO}/main/prices.json`;
+const RAW_URL = "./prices.json";  // same repo = no CORS
 const API_URL = `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/prices.json`;
 
 const SITES = ["costco","amazon","walmart","bestbuy"];
