@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-03-07T11:43:37.647419+00:00",
+  "last_updated": "2026-03-07T12:12:38.943001+00:00",
   "products": [
     {
       "id": "1772882181810",
@@ -16,7 +16,7 @@
           "in_stock": null,
           "history": [],
           "last_checked": "2026-03-07T11:43:01.175739+00:00",
-          "error": "Price not found"
+          "error": "No URL configured"
         }
       },
       "rfd_deal": null,
@@ -37,7 +37,7 @@
           "in_stock": null,
           "history": [],
           "last_checked": "2026-03-07T11:43:30.444860+00:00",
-          "error": "Price not found"
+          "error": "No URL configured"
         }
       },
       "rfd_deal": null,
@@ -56,7 +56,9 @@
           "price": null,
           "was": null,
           "in_stock": null,
-          "history": []
+          "history": [],
+          "last_checked": "2026-03-07T12:12:38.911832+00:00",
+          "error": "Price not found"
         }
       },
       "added_at": "2026-03-07T12:11:32.526Z"
