@@ -1,0 +1,25 @@
+{
+  "last_updated": "2026-03-07T00:00:00+00:00",
+  "products": [
+    {
+      "id": "4000077852",
+      "name": "ON Gold Standard Whey 2.56kg",
+      "short": "ON Whey Chocolate",
+      "url": "https://www.costco.ca/optimum-nutrition-gold-standard-100-whey-protein-extreme-chocolate-shake-256-kg.product.4000077852.html",
+      "price": "$79.99",
+      "in_stock": true,
+      "last_checked": "2026-03-07T00:00:00+00:00",
+      "error": null
+    },
+    {
+      "id": "100417020",
+      "name": "Kirkland Signature Protein Bars 20-count",
+      "short": "KS Protein Bars",
+      "url": "https://www.costco.ca/kirkland-signature-protein-bars-20-count.product.100417020.html",
+      "price": "$29.99",
+      "in_stock": true,
+      "last_checked": "2026-03-07T00:00:00+00:00",
+      "error": null
+    }
+  ]
+}
