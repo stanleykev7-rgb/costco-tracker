@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-03-07T16:59:03.932469+00:00",
+  "last_updated": "2026-03-07T17:01:51.293117+00:00",
   "products": [
     {
       "id": "1772902670084",
@@ -20,7 +20,7 @@
               "p": 159.99
             }
           ],
-          "last_checked": "2026-03-07T16:58:56.536314+00:00",
+          "last_checked": "2026-03-07T17:01:36.589259+00:00",
           "error": null
         }
       },
@@ -41,8 +41,8 @@
           "was": null,
           "in_stock": null,
           "history": [],
-          "last_checked": null,
-          "error": null
+          "last_checked": "2026-03-07T17:01:44.883480+00:00",
+          "error": "Price not found"
         }
       },
       "rfd_deal": null,
