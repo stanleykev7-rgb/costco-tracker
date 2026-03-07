@@ -4,334 +4,519 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Price Watchlist · Canada</title>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
-
 <style>
-/* ---- your existing styles remain unchanged ---- */
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:#f8f7f4;font-family:'DM Mono',monospace;min-height:100vh;}
+  .header{background:#1a1a2e;padding:22px 32px 0;}
+  .header-top{display:flex;align-items:center;gap:12;margin-bottom:4px;}
+  .header-title{font-family:'Instrument Serif',serif;font-size:26px;color:#f8f7f4;}
+  .header-sub{font-size:10px;color:#4b5563;letter-spacing:0.15em;}
+  .btn{background:transparent;border:1px solid #2d2d4e;border-radius:5px;padding:4px 12px;font-family:'DM Mono',monospace;font-size:10px;color:#6b7280;cursor:pointer;transition:all 0.15s;}
+  .btn:hover{border-color:#6366f1;color:#a78bfa;}
+  .btn.active{color:#6ee7b7;border-color:#6ee7b7;}
+  .tabs{display:flex;gap:0;margin-top:12px;}
+  .tab{font-size:11px;padding:8px 20px;cursor:pointer;color:#6b7280;border-bottom:2px solid transparent;letter-spacing:0.05em;transition:all 0.15s;}
+  .tab.active{color:#a78bfa;border-bottom-color:#a78bfa;}
+  .summary{background:white;border-bottom:1px solid #e5e7eb;padding:12px 32px;display:flex;gap:24px;flex-wrap:wrap;align-items:center;}
+  .stat-val{font-size:18px;color:#1a1a2e;font-weight:600;}
+  .stat-label{font-size:9px;color:#9ca3af;letter-spacing:0.1em;}
+  .content{padding:20px 32px;max-width:960px;margin:0 auto;}
+  .product-card{background:white;border:1px solid #e5e7eb;border-radius:12px;margin-bottom:12px;overflow:hidden;transition:box-shadow 0.2s;}
+  .product-card:hover{box-shadow:0 4px 20px rgba(0,0,0,0.06);}
+  .product-card.deal{border-color:#fde047;}
+  .deal-banner{background:#fef08a;padding:5px 16px;font-size:10px;color:#854d0e;display:flex;align-items:center;gap:6px;}
+  .product-header{padding:14px 18px;display:flex;align-items:center;gap:14px;cursor:pointer;}
+  .product-name{font-family:'Instrument Serif',serif;font-size:16px;color:#1a1a2e;}
+  .category-badge{font-size:9px;color:#9ca3af;background:#f3f4f6;padding:2px 7px;border-radius:20px;}
+  .best-price{font-size:22px;color:#15803d;font-weight:600;}
+  .sites-grid{display:grid;gap:1px;background:#f9fafb;border-top:1px solid #f3f4f6;}
+  .site-cell{background:white;padding:12px 14px;border-left:3px solid transparent;}
+  .site-cell.best{border-left-color:var(--site-color);}
+  .site-label{font-size:9px;font-weight:600;margin-bottom:5px;letter-spacing:0.08em;}
+  .site-price{font-size:17px;color:#1a1a2e;}
+  .site-price.best-p{color:#15803d;font-weight:700;}
+  .site-was{font-size:10px;color:#d1d5db;text-decoration:line-through;}
+  .site-stock{font-size:9px;margin-top:2px;}
+  .in-stock{color:#15803d;} .out-stock{color:#ef4444;}
+  .site-link{font-size:9px;color:#6366f1;text-decoration:none;display:block;margin-top:4px;}
+  .site-link:hover{text-decoration:underline;}
+  .site-age{font-size:8px;color:#d1d5db;margin-top:2px;}
+  .chart-wrap{padding:16px 18px;border-top:1px solid #f3f4f6;display:none;}
+  .chart-wrap.open{display:block;}
+  .chart-legend{display:flex;gap:14px;margin-bottom:10px;flex-wrap:wrap;}
+  .legend-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:4px;}
+  .empty-state{text-align:center;padding:48px 24px;background:white;border:2px dashed #e5e7eb;border-radius:12px;margin-bottom:16px;}
+  .add-btn{width:100%;background:white;border:2px dashed #e5e7eb;border-radius:12px;padding:16px;font-family:'DM Mono',monospace;font-size:12px;color:#9ca3af;cursor:pointer;letter-spacing:0.08em;transition:all 0.15s;margin-top:4px;}
+  .add-btn:hover{border-color:#6366f1;color:#6366f1;}
+  .form-card{background:white;border:1px solid #e5e7eb;border-radius:12px;padding:24px;margin-bottom:16px;}
+  .form-title{font-family:'Instrument Serif',serif;font-size:18px;color:#1a1a2e;margin-bottom:4px;}
+  .form-sub{font-size:10px;color:#9ca3af;margin-bottom:20px;}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+  label{font-size:10px;color:#9ca3af;display:block;margin-bottom:4px;}
+  input,select{width:100%;padding:9px 12px;border:1px solid #e5e7eb;border-radius:6px;font-family:'DM Mono',monospace;font-size:12px;outline:none;background:white;}
+  input:focus,select:focus{border-color:#6366f1;}
+  .hint{font-size:9px;color:#c4b5fd;margin-top:4px;}
+  .sites-picker{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:20px;}
+  .site-tile{border:2px solid #e5e7eb;border-radius:10px;padding:12px 10px;cursor:pointer;text-align:center;transition:all 0.15s;user-select:none;}
+  .site-tile.on{background:var(--c8);}
+  .site-tile-icon{font-size:20px;margin-bottom:4px;}
+  .site-tile-label{font-size:11px;font-weight:400;color:#9ca3af;}
+  .site-tile.on .site-tile-label{font-weight:600;}
+  .site-tile-check{font-size:9px;color:#d1d5db;margin-top:3px;}
+  .site-tile.on .site-tile-check{color:#15803d;}
+  .preview-box{background:#f8f7f4;border:1px solid #e5e7eb;border-radius:8px;padding:12px 14px;margin-bottom:16px;}
+  .preview-title{font-size:9px;color:#9ca3af;letter-spacing:0.1em;margin-bottom:6px;}
+  .preview-row{font-size:11px;color:#6b7280;margin-bottom:3px;}
+  .form-actions{display:flex;gap:8px;align-items:center;}
+  .btn-primary{background:#1a1a2e;color:white;border:none;border-radius:6px;padding:9px 20px;font-family:'DM Mono',monospace;font-size:12px;cursor:pointer;letter-spacing:0.05em;}
+  .btn-primary:disabled{background:#e5e7eb;color:#9ca3af;cursor:not-allowed;}
+  .btn-secondary{background:white;color:#6b7280;border:1px solid #e5e7eb;border-radius:6px;padding:9px 20px;font-family:'DM Mono',monospace;font-size:12px;cursor:pointer;}
+  .btn-danger{background:white;border:1px solid #fecaca;border-radius:5px;padding:3px 8px;cursor:pointer;font-family:'DM Mono',monospace;font-size:10px;color:#ef4444;}
+  .alert{border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:11px;}
+  .alert-warn{background:#fef3c7;border:1px solid #fcd34d;color:#92400e;}
+  .alert-err{background:#fef2f2;border:1px solid #fecaca;color:#dc2626;}
+  .alert-info{background:#eff6ff;border:1px solid #bfdbfe;color:#1d4ed8;}
+  .alert-deals{background:#fefce8;border:1px solid #fde047;}
+  .deals-title{font-size:10px;color:#854d0e;letter-spacing:0.1em;margin-bottom:8px;}
+  .deal-row{display:flex;align-items:center;gap:12px;margin-bottom:4px;flex-wrap:wrap;}
+  .pat-box{background:#0d1117;border:1px solid #2d2d4e;border-radius:8px;padding:12px 14px;margin-bottom:12px;}
+  .pat-label{font-size:10px;color:#9ca3af;margin-bottom:6px;}
+  .pat-row{display:flex;gap:8px;}
+  .pat-input{flex:1;padding:7px 10px;background:#161b22;border:1px solid #30363d;border-radius:5px;font-family:'DM Mono',monospace;font-size:12px;color:#e6edf3;outline:none;}
+  .btn-save-pat{background:#6366f1;color:white;border:none;border-radius:5px;padding:7px 16px;font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;}
+  .btn-clear-pat{background:transparent;color:#6b7280;border:1px solid #2d2d4e;border-radius:5px;padding:7px 12px;font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;}
+  .chevron{color:#9ca3af;font-size:18px;transition:transform 0.2s;display:inline-block;}
+  .chevron.open{transform:rotate(180deg);}
+  .loading{text-align:center;padding:48px;color:#9ca3af;font-size:12px;}
+  .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .stats-card{background:white;border:1px solid #e5e7eb;border-radius:12px;padding:20px;}
+  .stats-title{font-family:'Instrument Serif',serif;font-size:16px;color:#1a1a2e;margin-bottom:16px;}
+  .stats-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f3f4f6;font-size:12px;}
+  .stats-key{color:#6b7280;} .stats-val{color:#1a1a2e;font-weight:600;}
+  .gauge-wrap{margin-bottom:14px;}
+  .gauge-header{display:flex;justify-content:space-between;margin-bottom:5px;font-size:11px;}
+  .gauge-track{height:6px;background:#f3f4f6;border-radius:99px;overflow:hidden;}
+  .gauge-fill{height:100%;border-radius:99px;transition:width 1s ease;}
+  .rfd-deals-box{margin-top:12px;background:#fefce8;border-radius:8px;padding:10px 12px;}
+  @media(max-width:600px){
+    .content{padding:16px;}
+    .summary{padding:12px 16px;}
+    .header{padding:16px 16px 0;}
+    .sites-grid{grid-template-columns:repeat(2,1fr)!important;}
+    .form-grid{grid-template-columns:1fr;}
+    .sites-picker{grid-template-columns:repeat(2,1fr);}
+    .stats-grid{grid-template-columns:1fr;}
+  }
 </style>
 </head>
-
 <body>
 
 <!-- HEADER -->
 <div class="header">
-  <div class="header-top">
+  <div class="header-top" style="display:flex;align-items:center;gap:12px;margin-bottom:4px;">
     <span class="header-title">Price Watchlist</span>
     <span class="header-sub">CANADA</span>
-
     <div style="margin-left:auto;display:flex;gap:8px;">
       <button class="btn" id="patBtn" onclick="togglePat()">🔑 SET PAT</button>
       <button class="btn" onclick="fetchData()">↻ REFRESH</button>
     </div>
   </div>
+  <div id="patBox" class="pat-box" style="display:none;">
+    <div class="pat-label">GitHub PAT — stored in localStorage, used only for saving products to your repo</div>
+    <div class="pat-row">
+      <input type="password" class="pat-input" id="patInput" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"/>
+      <button class="btn-save-pat" onclick="savePat()">SAVE</button>
+      <button class="btn-clear-pat" onclick="clearPat()">CLEAR</button>
+    </div>
+  </div>
+  <div class="tabs">
+    <div class="tab active" id="tab-prices" onclick="switchTab('prices')">PRICES</div>
+    <div class="tab" id="tab-stats" onclick="switchTab('stats')">STATS & USAGE</div>
+  </div>
 </div>
 
+<!-- SUMMARY BAR -->
+<div class="summary">
+  <div><div class="stat-val" id="s-products">0</div><div class="stat-label">PRODUCTS</div></div>
+  <div><div class="stat-val" id="s-drops" style="color:#15803d">0</div><div class="stat-label">PRICE DROPS</div></div>
+  <div><div class="stat-val" id="s-deals">0</div><div class="stat-label">RFD DEALS</div></div>
+  <div><div class="stat-val" id="s-sites">0</div><div class="stat-label">SITES ACTIVE</div></div>
+  <div style="margin-left:auto;font-size:10px;color:#d1d5db;" id="s-updated">Loading...</div>
+</div>
+
+<!-- CONTENT -->
 <div class="content">
 
-<div id="products-list"></div>
+  <!-- PRICES TAB -->
+  <div id="page-prices">
+    <div id="alert-pat" class="alert alert-warn" style="display:none;">⚠ Set your GitHub PAT (🔑 button top right) to add or remove products</div>
+    <div id="alert-err" class="alert alert-err" style="display:none;"></div>
+    <div id="alert-saving" class="alert alert-info" style="display:none;">⏳ Saving to GitHub...</div>
+    <div id="deals-box" class="alert alert-deals" style="display:none;">
+      <div class="deals-title">🔥 RFD DEAL ALERTS</div>
+      <div id="deals-list"></div>
+    </div>
+    <div id="loading" class="loading">⏳ Loading prices...</div>
+    <div id="products-list"></div>
+    <div id="add-form" style="display:none;"></div>
+    <button class="add-btn" id="add-btn" style="display:none;" onclick="showAddForm()">+ ADD PRODUCT</button>
+  </div>
 
-<div id="add-form" style="display:none;"></div>
-
-<button class="add-btn" id="add-btn" onclick="showAddForm()">+ ADD PRODUCT</button>
+  <!-- STATS TAB -->
+  <div id="page-stats" style="display:none;">
+    <div class="stats-grid">
+      <div class="stats-card" style="grid-column:1/-1;">
+        <div class="stats-title">GitHub Actions Usage</div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px;" id="gh-stats"></div>
+        <div class="gauge-wrap" id="gh-gauge"></div>
+      </div>
+      <div class="stats-card">
+        <div class="stats-title">Residential Proxy</div>
+        <div id="proxy-stats"></div>
+      </div>
+      <div class="stats-card">
+        <div class="stats-title">Product Breakdown</div>
+        <div id="product-breakdown"></div>
+      </div>
+    </div>
+  </div>
 
 </div>
 
 <script>
+const GITHUB_USERNAME = "stanleykev7-rgb";
+const GITHUB_REPO = "costco-tracker";
+const RAW_URL = "./prices.json";  // same repo = no CORS
+const API_URL = `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/prices.json`;
 
-const GITHUB_USERNAME="stanleykev7-rgb"
-const GITHUB_REPO="costco-tracker"
+const SITES = ["costco","amazon","walmart","bestbuy"];
+const SITE_META = {
+  costco:  {label:"Costco",  color:"#0061a3", icon:"🏪"},
+  amazon:  {label:"Amazon",  color:"#f59e0b", icon:"📦"},
+  walmart: {label:"Walmart", color:"#0071ce", icon:"🛒"},
+  bestbuy: {label:"Best Buy",color:"#6366f1", icon:"💻"},
+};
+const CHART_COLORS = ["#0061a3","#f59e0b","#0071ce","#6366f1"];
+const CATEGORIES = ["Protein","Supplements","Electronics","Snacks","Home","Appliances","General"];
 
-const RAW_URL="./prices.json"
+let appData = null;
+let currentSha = null;
+let expandedId = null;
+let charts = {};
 
-const API_URL=`https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/prices.json`
+// ── PAT ──────────────────────────────────────────────────────────────────────
+function getPat(){ return localStorage.getItem("gh_pat")||""; }
+function savePat(){ const v=document.getElementById("patInput").value; localStorage.setItem("gh_pat",v); document.getElementById("patBox").style.display="none"; document.getElementById("patBtn").textContent="🔒 PAT SET"; document.getElementById("patBtn").classList.add("active"); fetchData(); }
+function clearPat(){ localStorage.removeItem("gh_pat"); document.getElementById("patInput").value=""; document.getElementById("patBtn").textContent="🔑 SET PAT"; document.getElementById("patBtn").classList.remove("active"); document.getElementById("patBox").style.display="none"; }
+function togglePat(){ const b=document.getElementById("patBox"); b.style.display=b.style.display==="none"?"block":"none"; document.getElementById("patInput").value=getPat(); }
 
-const SITES=["costco","amazon","walmart","bestbuy"]
+// ── UTILS ─────────────────────────────────────────────────────────────────────
+function timeAgo(iso){ if(!iso)return"never"; const d=Math.floor((Date.now()-new Date(iso))/1000); if(d<60)return`${d}s ago`; if(d<3600)return`${Math.floor(d/60)}m ago`; if(d<86400)return`${Math.floor(d/3600)}h ago`; return`${Math.floor(d/86400)}d ago`; }
+function getBestSite(sd={}){ let b=null,bp=Infinity; for(const[s,d]of Object.entries(sd)){if(d?.price&&d?.in_stock&&d.price<bp){bp=d.price;b=s;}} return b; }
 
-const SITE_META={
-costco:{label:"Costco"},
-amazon:{label:"Amazon"},
-walmart:{label:"Walmart"},
-bestbuy:{label:"Best Buy"}
-}
-
-let appData=null
-let currentSha=null
-let selectedSites={}
-
-function getPat(){
-return localStorage.getItem("gh_pat")||""
-}
-
-function togglePat(){
-const v=prompt("Enter GitHub PAT")
-if(v){
-localStorage.setItem("gh_pat",v)
-}
-}
-
+// ── FETCH ─────────────────────────────────────────────────────────────────────
 async function fetchData(){
-
-const res=await fetch(RAW_URL+"?t="+Date.now())
-
-appData=await res.json()
-
-render()
-
+  document.getElementById("loading").style.display="block";
+  document.getElementById("products-list").innerHTML="";
+  document.getElementById("alert-err").style.display="none";
+  try {
+    // Direct fetch — no CORS issue since this page is served from GitHub Pages (same origin area) or user's browser
+    const headers = {"Cache-Control":"no-cache"};
+    const pat = getPat();
+    if(pat) headers["Authorization"] = `Bearer ${pat}`;
+    const res = await fetch(RAW_URL + "?t=" + Date.now(), {headers});
+    if(!res.ok) throw new Error(`HTTP ${res.status}`);
+    appData = await res.json();
+    // Get SHA for saves
+    if(pat){
+      try{
+        const r=await fetch(API_URL,{headers:{Authorization:`Bearer ${pat}`,"Accept":"application/vnd.github+json"}});
+        if(r.ok){const j=await r.json();currentSha=j.sha;}
+      }catch{}
+    }
+    render();
+  } catch(e){
+    document.getElementById("loading").style.display="none";
+    const el=document.getElementById("alert-err");
+    el.textContent=`⚠ ${e.message}`;
+    el.style.display="block";
+  }
 }
 
+// ── SAVE ──────────────────────────────────────────────────────────────────────
+async function saveData(){
+  const pat=getPat();
+  if(!pat){ alert("Please set your GitHub PAT first"); togglePat(); return; }
+  document.getElementById("alert-saving").style.display="block";
+  try{
+    const r=await fetch(API_URL,{headers:{Authorization:`Bearer ${pat}`,"Accept":"application/vnd.github+json"}});
+    if(!r.ok) throw new Error(`Cannot read file: ${r.status}`);
+    const j=await r.json(); currentSha=j.sha;
+    const content=btoa(unescape(encodeURIComponent(JSON.stringify(appData,null,2))));
+    const res=await fetch(API_URL,{method:"PUT",headers:{Authorization:`Bearer ${pat}`,"Content-Type":"application/json"},body:JSON.stringify({message:"chore: update product list from tracker UI",content,sha:currentSha})});
+    if(!res.ok) throw new Error(`Save failed: ${res.status}`);
+    const saved=await res.json(); currentSha=saved.content.sha;
+    document.getElementById("alert-saving").style.display="none";
+  }catch(e){
+    document.getElementById("alert-saving").style.display="none";
+    alert(`Error saving: ${e.message}`);
+  }
+}
+
+// ── RENDER ────────────────────────────────────────────────────────────────────
 function render(){
+  document.getElementById("loading").style.display="none";
+  const products=appData?.products||[];
+  const pat=getPat();
 
-const products=appData?.products||[]
+  // Summary
+  const drops=products.filter(p=>Object.values(p.site_data||{}).some(d=>d?.price&&d?.was&&d.price<d.was)).length;
+  const deals=products.filter(p=>p.rfd_deal?.found);
+  const sites=[...new Set(products.flatMap(p=>p.sites_to_track||[]))].length;
+  document.getElementById("s-products").textContent=products.length;
+  document.getElementById("s-drops").textContent=drops;
+  document.getElementById("s-deals").textContent=deals.length>0?`${deals.length} 🔥`:"0";
+  document.getElementById("s-deals").style.color=deals.length>0?"#854d0e":"#1a1a2e";
+  document.getElementById("s-sites").textContent=sites;
+  document.getElementById("s-updated").textContent=appData?.last_updated?`Updated ${timeAgo(appData.last_updated)}`:"Never updated";
 
-document.getElementById("products-list").innerHTML=products.map(p=>`
+  // PAT warning
+  document.getElementById("alert-pat").style.display=pat?"none":"block";
+  document.getElementById("add-btn").style.display=pat?"block":"none";
+  if(pat){ document.getElementById("patBtn").textContent="🔒 PAT SET"; document.getElementById("patBtn").classList.add("active"); }
 
-<div class="product-card">
+  // Deal alerts
+  if(deals.length>0){
+    document.getElementById("deals-box").style.display="block";
+    document.getElementById("deals-list").innerHTML=deals.map(p=>`
+      <div class="deal-row">
+        <span style="font-size:12px;font-weight:600;color:#1a1a2e;">${p.name}</span>
+        <span style="font-size:11px;color:#854d0e;">— ${p.rfd_deal.title}</span>
+        <a href="${p.rfd_deal.url}" target="_blank" style="margin-left:auto;font-size:10px;color:#6366f1;text-decoration:none;">View on RFD →</a>
+      </div>`).join("");
+  }
 
-<div class="product-header">
+  // Empty state
+  if(products.length===0){
+    document.getElementById("products-list").innerHTML=`
+      <div class="empty-state">
+        <div style="font-size:32px;margin-bottom:12px;">📋</div>
+        <div style="font-family:'Instrument Serif',serif;font-size:20px;color:#1a1a2e;margin-bottom:6px;">No products yet</div>
+        <div style="font-size:11px;color:#9ca3af;margin-bottom:20px;">Add a product to start tracking prices</div>
+        ${pat?`<button class="btn-primary" onclick="showAddForm()">+ ADD FIRST PRODUCT</button>`:""}
+      </div>`;
+    renderStats();
+    return;
+  }
 
-<div>
+  // Products
+  document.getElementById("products-list").innerHTML=products.map((p,idx)=>{
+    const best=getBestSite(p.site_data||{});
+    const bestPrice=best?p.site_data[best]?.price:null;
+    const sitesList=p.sites_to_track||SITES;
+    const colCount=sitesList.length;
+    return `
+    <div class="product-card${p.rfd_deal?.found?" deal":""}" id="card-${p.id}">
+      ${p.rfd_deal?.found?`<div class="deal-banner">🔥 DEAL ON RFD · $${p.rfd_deal.price?.toFixed(2)} <a href="${p.rfd_deal.url}" target="_blank" style="margin-left:auto;color:#6366f1;text-decoration:none;">View →</a></div>`:""}
+      <div class="product-header" onclick="toggleExpand('${p.id}')">
+        <div style="flex:1;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;flex-wrap:wrap;">
+            <span class="product-name">${p.name}</span>
+            <span class="category-badge">${p.category||""}</span>
+          </div>
+          ${best?`<div style="font-size:10px;color:#6b7280;">Best at <span style="color:${SITE_META[best].color};font-weight:600;">${SITE_META[best].label}</span></div>`:`<div style="font-size:10px;color:#d1d5db;">Awaiting first scrape...</div>`}
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          ${bestPrice?`<div class="best-price">$${bestPrice.toFixed(2)}</div>`:""}
+          ${pat?`<button class="btn-danger" onclick="removeProduct(event,'${p.id}')">✕</button>`:""}
+          <span class="chevron" id="chev-${p.id}">⌄</span>
+        </div>
+      </div>
+      <div class="sites-grid" style="grid-template-columns:repeat(${colCount},1fr);">
+        ${sitesList.map(site=>{
+          const d=p.site_data?.[site]||{};
+          const isBest=site===best;
+          return `<div class="site-cell${isBest?" best":""}" style="--site-color:${SITE_META[site].color};">
+            <div class="site-label" style="color:${SITE_META[site].color};">${SITE_META[site].label.toUpperCase()}</div>
+            ${d.price?`
+              <div class="site-price${isBest?" best-p":""}">$${d.price.toFixed(2)}</div>
+              ${d.was&&d.price<d.was?`<div class="site-was">$${d.was.toFixed(2)}</div>`:""}
+              <div class="site-stock ${d.in_stock?"in-stock":"out-stock"}">${d.in_stock?"● In stock":"○ Out of stock"}</div>
+              ${d.url?`<a href="${d.url}" target="_blank" class="site-link">View →</a>`:""}
+              <div class="site-age">${timeAgo(d.last_checked)}</div>
+            `:d.error?`<div style="font-size:10px;color:#ef4444;">Error</div>`:`<div style="font-size:10px;color:#d1d5db;">Pending...</div>`}
+          </div>`;
+        }).join("")}
+      </div>
+      <div class="chart-wrap" id="chart-${p.id}">
+        <div style="font-size:9px;color:#9ca3af;letter-spacing:0.15em;margin-bottom:10px;">PRICE HISTORY</div>
+        <div class="chart-legend" id="legend-${p.id}"></div>
+        <canvas id="canvas-${p.id}" height="140"></canvas>
+      </div>
+    </div>`;
+  }).join("");
 
-<div class="product-name">${p.name}</div>
-
-<div>${p.category||""}</div>
-
-</div>
-
-</div>
-
-</div>
-
-`).join("")
-
+  renderStats();
 }
+
+function toggleExpand(id){
+  const wrap=document.getElementById(`chart-${id}`);
+  const chev=document.getElementById(`chev-${id}`);
+  const isOpen=wrap.classList.contains("open");
+  if(isOpen){ wrap.classList.remove("open"); chev.classList.remove("open"); return; }
+  wrap.classList.add("open"); chev.classList.add("open");
+  // Render chart
+  const product=(appData?.products||[]).find(p=>p.id===id);
+  if(!product) return;
+  const sites=product.sites_to_track||SITES;
+  const dates=new Set();
+  sites.forEach(s=>product.site_data?.[s]?.history?.forEach(h=>dates.add(h.d)));
+  const labels=[...dates].sort();
+  if(!labels.length) return;
+  const datasets=sites.map((s,i)=>({
+    label:SITE_META[s].label,
+    data:labels.map(d=>product.site_data?.[s]?.history?.find(h=>h.d===d)?.p||null),
+    borderColor:CHART_COLORS[i],backgroundColor:CHART_COLORS[i]+"22",
+    borderWidth:2,pointRadius:3,tension:0,spanGaps:true,stepped:"before"
+  })).filter(ds=>ds.data.some(v=>v!==null));
+  // Legend
+  document.getElementById(`legend-${id}`).innerHTML=datasets.map(ds=>`<span style="font-size:10px;color:#6b7280;"><span class="legend-dot" style="background:${ds.borderColor};"></span>${ds.label}</span>`).join("");
+  if(charts[id]) charts[id].destroy();
+  const ctx=document.getElementById(`canvas-${id}`).getContext("2d");
+  charts[id]=new Chart(ctx,{type:"line",data:{labels,datasets},options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.dataset.label}: $${c.parsed.y?.toFixed(2)}`}}},scales:{x:{grid:{display:false},ticks:{font:{family:"DM Mono",size:9},color:"#9ca3af"}},y:{grid:{color:"#f3f4f6"},ticks:{font:{family:"DM Mono",size:9},color:"#9ca3af",callback:v=>`$${v}`}}}}});
+}
+
+// ── ADD PRODUCT ───────────────────────────────────────────────────────────────
+let selectedSites={costco:true,amazon:true,walmart:true,bestbuy:false};
 
 function showAddForm(){
-
-selectedSites={costco:false,amazon:false,walmart:false,bestbuy:false}
-
-renderForm()
-
-document.getElementById("add-btn").style.display="none"
-
-document.getElementById("add-form").style.display="block"
-
+  document.getElementById("add-btn").style.display="none";
+  document.getElementById("add-form").style.display="block";
+  selectedSites={costco:true,amazon:true,walmart:true,bestbuy:false};
+  renderForm();
 }
 
 function renderForm(){
-
-document.getElementById("add-form").innerHTML=`
-
-<div class="form-card">
-
-<div class="form-title">Add Product</div>
-
-<div class="form-sub">Enter product name and paste the product URL for each store.</div>
-
-<div class="form-grid">
-
-<div>
-
-<label>PRODUCT NAME</label>
-
-<input id="pname" placeholder="Product name"/>
-
-</div>
-
-<div>
-
-<label>CATEGORY</label>
-
-<input id="pcat" placeholder="Category"/>
-
-</div>
-
-</div>
-
-<label>Select stores</label>
-
-<div class="sites-picker">
-
-${SITES.map(site=>`
-
-<div class="site-tile" onclick="toggleSite('${site}')">
-
-${SITE_META[site].label}
-
-</div>
-
-`).join("")}
-
-</div>
-
-<div id="url-inputs"></div>
-
-<div class="form-actions">
-
-<button class="btn-primary" onclick="addProduct()">ADD PRODUCT</button>
-
-<button class="btn-secondary" onclick="cancelAdd()">Cancel</button>
-
-</div>
-
-</div>
-
-`
-
+  const name=document.getElementById("pname")?.value||"";
+  document.getElementById("add-form").innerHTML=`
+    <div class="form-card">
+      <div class="form-title">Add New Product</div>
+      <div class="form-sub">Type a product name — scraper auto-finds it on each selected site.</div>
+      <div class="form-grid">
+        <div>
+          <label>PRODUCT NAME *</label>
+          <input id="pname" placeholder="e.g. ON Gold Standard Whey 2.56kg" value="${name}" oninput="renderForm()"/>
+          <div class="hint">💡 Include size/model for best match</div>
+        </div>
+        <div>
+          <label>CATEGORY</label>
+          <select id="pcat">${CATEGORIES.map(c=>`<option>${c}</option>`).join("")}</select>
+        </div>
+      </div>
+      <label style="margin-bottom:10px;display:block;">TRACK ON WHICH SITES?</label>
+      <div class="sites-picker">
+        ${SITES.map(site=>`
+          <div class="site-tile${selectedSites[site]?" on":""}" style="--c8:${SITE_META[site].color}18;border-color:${selectedSites[site]?SITE_META[site].color:"#e5e7eb"};" onclick="toggleSite('${site}')">
+            <div class="site-tile-icon">${SITE_META[site].icon}</div>
+            <div class="site-tile-label" style="color:${selectedSites[site]?SITE_META[site].color:"#9ca3af"};">${SITE_META[site].label}</div>
+            <div class="site-tile-check">${selectedSites[site]?"✓ selected":"click to add"}</div>
+          </div>`).join("")}
+      </div>
+      ${name&&Object.values(selectedSites).some(Boolean)?`
+      <div class="preview-box">
+        <div class="preview-title">SCRAPER WILL SEARCH FOR</div>
+        ${SITES.filter(s=>selectedSites[s]).map(s=>`<div class="preview-row"><span style="color:${SITE_META[s].color};font-weight:600;">${SITE_META[s].label}</span> → <span style="color:#1a1a2e;">"${name}"</span> <span style="color:#c4b5fd;">(auto-discovered)</span></div>`).join("")}
+      </div>`:""}
+      <div class="form-actions">
+        <button class="btn-primary" ${!name||!Object.values(selectedSites).some(Boolean)?"disabled":""} onclick="addProduct()">+ ADD PRODUCT</button>
+        <button class="btn-secondary" onclick="cancelAdd()">CANCEL</button>
+      </div>
+    </div>`;
 }
 
-function toggleSite(site){
+function toggleSite(site){ selectedSites[site]=!selectedSites[site]; renderForm(); }
 
-selectedSites[site]=!selectedSites[site]
-
-renderUrlInputs()
-
-}
-
-function renderUrlInputs(){
-
-const html=SITES.filter(s=>selectedSites[s]).map(site=>`
-
-<div style="margin-bottom:10px">
-
-<label>${SITE_META[site].label} URL</label>
-
-<input id="url-${site}" placeholder="Paste ${SITE_META[site].label} product URL"/>
-
-</div>
-
-`).join("")
-
-document.getElementById("url-inputs").innerHTML=html
-
-}
-
-function cancelAdd(){
-
-document.getElementById("add-form").style.display="none"
-
-document.getElementById("add-btn").style.display="block"
-
-}
+function cancelAdd(){ document.getElementById("add-form").style.display="none"; document.getElementById("add-form").innerHTML=""; document.getElementById("add-btn").style.display="block"; }
 
 async function addProduct(){
-
-const name=document.getElementById("pname").value.trim()
-
-const cat=document.getElementById("pcat").value.trim()
-
-if(!name)return
-
-const site_data={}
-
-const sites=[]
-
-SITES.forEach(site=>{
-
-if(selectedSites[site]){
-
-const url=document.getElementById(`url-${site}`).value.trim()
-
-sites.push(site)
-
-site_data[site]={
-
-url:url,
-
-price:null,
-
-was:null,
-
-in_stock:null,
-
-history:[]
-
+  const name=document.getElementById("pname").value.trim();
+  const cat=document.getElementById("pcat").value;
+  if(!name||!Object.values(selectedSites).some(Boolean)) return;
+  const product={id:Date.now().toString(),name,category:cat,sites_to_track:SITES.filter(s=>selectedSites[s]),site_data:{},rfd_deal:null,added_at:new Date().toISOString()};
+  if(!appData) appData={last_updated:null,products:[]};
+  appData.products.push(product);
+  cancelAdd();
+  render();
+  await saveData();
 }
 
+async function removeProduct(e,id){
+  e.stopPropagation();
+  if(!confirm("Remove this product?")) return;
+  appData.products=appData.products.filter(p=>p.id!==id);
+  render();
+  await saveData();
 }
 
-})
+// ── STATS ─────────────────────────────────────────────────────────────────────
+function renderStats(){
+  const products=appData?.products||[];
+  const totalSlots=products.reduce((a,p)=>a+(p.sites_to_track?.length||0),0);
+  const minsPerMonth=Math.round((3+6)*3*30);
+  const mbPerMonth=Math.max(totalSlots*0.05*8*30,1).toFixed(0);
+  const ghPct=Math.min(Math.round(minsPerMonth/2000*100),100);
+  const proxPct=Math.min(Math.round(mbPerMonth/1024*100),100);
+  const costPerMonth=(mbPerMonth/1024).toFixed(2);
 
-const product={
+  document.getElementById("gh-stats").innerHTML=[
+    {l:"EST. MINS/MONTH",v:minsPerMonth,s:`of 2,000 free`,c:ghPct>75?"#ef4444":"#6366f1"},
+    {l:"SCRAPES/DAY",v:3,s:"every 8 hours",c:"#0ea5e9"},
+    {l:"RFD CHECKS/DAY",v:6,s:"every 4 hours",c:"#f59e0b"},
+    {l:"PRODUCTS",v:products.length,s:`${totalSlots} site slots`,c:"#1a1a2e"},
+  ].map(s=>`<div><div style="font-size:9px;color:#9ca3af;letter-spacing:0.12em;margin-bottom:4px;">${s.l}</div><div style="font-size:22px;color:${s.c};font-weight:600;">${s.v}</div><div style="font-size:10px;color:#9ca3af;">${s.s}</div></div>`).join("");
 
-id:Date.now().toString(),
+  document.getElementById("gh-gauge").innerHTML=`
+    <div class="gauge-wrap">
+      <div class="gauge-header"><span style="color:#6b7280;">${ghPct}% of free tier (estimated)</span><span style="font-weight:600;color:${ghPct>75?"#ef4444":"#1a1a2e"}">${2000-minsPerMonth} mins remaining</span></div>
+      <div class="gauge-track"><div class="gauge-fill" style="width:${ghPct}%;background:${ghPct>75?"#ef4444":"#6366f1"};"></div></div>
+    </div>`;
 
-name,
+  document.getElementById("proxy-stats").innerHTML=`
+    <div class="gauge-wrap">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+        <div><div style="font-size:9px;color:#9ca3af;letter-spacing:0.12em;margin-bottom:4px;">EST. DATA/MONTH</div><div style="font-size:20px;color:#1a1a2e;font-weight:600;">${mbPerMonth}MB</div><div style="font-size:10px;color:#9ca3af;">of 1,024MB</div></div>
+        <div><div style="font-size:9px;color:#9ca3af;letter-spacing:0.12em;margin-bottom:4px;">EST. COST/MONTH</div><div style="font-size:20px;color:#15803d;font-weight:600;">$${costPerMonth}</div><div style="font-size:10px;color:#9ca3af;">at $1/GB</div></div>
+      </div>
+      <div class="gauge-header"><span style="color:#6b7280;">${proxPct}% of 1GB</span><span style="font-weight:600;color:#1a1a2e;">${(1024-mbPerMonth).toFixed(0)}MB left</span></div>
+      <div class="gauge-track"><div class="gauge-fill" style="width:${proxPct}%;background:#10b981;"></div></div>
+    </div>
+    <div style="background:#f0fdf4;padding:10px 12px;border-radius:6px;font-size:10px;color:#15803d;">💰 $5 top-up lasts ~${Math.round(5/Math.max(costPerMonth,0.01))} months at current usage</div>`;
 
-category:cat,
-
-sites_to_track:sites,
-
-site_data,
-
-added_at:new Date().toISOString()
-
+  document.getElementById("product-breakdown").innerHTML=products.length===0
+    ?`<div style="font-size:11px;color:#d1d5db;text-align:center;padding:24px 0;">No products added yet</div>`
+    :products.map(p=>`
+      <div style="margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid #f3f4f6;">
+        <div style="font-size:11px;color:#1a1a2e;font-weight:600;margin-bottom:4px;">${p.name}</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          ${(p.sites_to_track||[]).map(s=>`<span style="font-size:9px;color:${SITE_META[s].color};background:${SITE_META[s].color}18;padding:2px 7px;border-radius:20px;">${SITE_META[s].label}</span>`).join("")}
+        </div>
+      </div>`).join("");
 }
 
-if(!appData){
-
-appData={products:[]}
-
+// ── TABS ──────────────────────────────────────────────────────────────────────
+function switchTab(t){
+  ["prices","stats"].forEach(id=>{
+    document.getElementById(`page-${id}`).style.display=id===t?"block":"none";
+    document.getElementById(`tab-${id}`).classList.toggle("active",id===t);
+  });
 }
 
-appData.products.push(product)
-
-await saveData()
-
-cancelAdd()
-
-render()
-
-}
-
-async function saveData(){
-
-const pat=getPat()
-
-if(!pat){
-
-alert("Set GitHub PAT first")
-
-return
-
-}
-
-const res=await fetch(API_URL,{
-
-headers:{Authorization:`Bearer ${pat}`}
-
-})
-
-const file=await res.json()
-
-const content=btoa(JSON.stringify(appData,null,2))
-
-await fetch(API_URL,{
-
-method:"PUT",
-
-headers:{Authorization:`Bearer ${pat}`,"Content-Type":"application/json"},
-
-body:JSON.stringify({
-
-message:"update products",
-
-content,
-
-sha:file.sha
-
-})
-
-})
-
-}
-
-fetchData()
-
+// ── INIT ──────────────────────────────────────────────────────────────────────
+if(getPat()){ document.getElementById("patBtn").textContent="🔒 PAT SET"; document.getElementById("patBtn").classList.add("active"); }
+fetchData();
 </script>
-
 </body>
 </html>
