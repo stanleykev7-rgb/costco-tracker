@@ -84,7 +84,7 @@ def extract_price_from_text(text):
     return None
 
 # ── COSTCO: Direct API (no browser needed) ───────────────────────────────────
-def scrape_costco_api(url):
+def scrape_costco_api(url, product_name=""):
     """Fetch Costco price via RapidAPI Real-Time Costco Data (bypasses Akamai)."""
     if not RAPIDAPI_KEY:
         print(f"  ❌ RAPIDAPI_KEY not set in secrets")
@@ -98,13 +98,14 @@ def scrape_costco_api(url):
     print(f"  🔑 RapidAPI Costco: product ID {product_id}")
 
     try:
+        # Search by product name on Costco CA
         resp = requests.get(
-            "https://real-time-costco-data.p.rapidapi.com/product",
+            "https://real-time-costco-data.p.rapidapi.com/search",
             headers={
                 "x-rapidapi-host": "real-time-costco-data.p.rapidapi.com",
                 "x-rapidapi-key": RAPIDAPI_KEY,
             },
-            params={"item_id": product_id, "warehouse_id": "businessCenterToronto"},
+            params={"query": product_name, "country": "CA", "language": "en-CA", "start": "0"},
             timeout=20
         )
         print(f"  📡 RapidAPI status: {resp.status_code}")
@@ -117,38 +118,27 @@ def scrape_costco_api(url):
         price = None
         in_stock = True
 
-        # Try all known price paths
-        for path in [
-            ["product", "price"],
-            ["product", "salePrice"],
-            ["product", "yourPrice"],
-            ["product", "finalPrice"],
-            ["price"],
-            ["salePrice"],
-            ["yourPrice"],
-            ["finalPrice"],
-        ]:
-            try:
-                val = data
-                for key in path:
-                    val = val[key]
+        # Find matching product in results by product_id
+        results = data.get("products") or data.get("results") or data.get("items") or []
+        if isinstance(results, list) and results:
+            # Try to match by product_id first, fall back to first result
+            match = next((r for r in results if str(r.get("product_id","")) == str(product_id)), results[0])
+            print(f"  🎯 Matched: {match.get('title','')[:60]}")
+
+            # Try all known price fields
+            for field in ["price","salePrice","yourPrice","finalPrice","current_price","sale_price"]:
+                val = match.get(field)
                 if val:
                     price = extract_price_from_text(str(val))
                     if price:
-                        print(f"  💰 [{'.'.join(path)}]: ${price}")
+                        print(f"  💰 [{field}]: ${price}")
                         break
-            except (KeyError, TypeError):
-                continue
 
-        # Stock status
-        try:
-            stock_str = str(data.get("product", data).get("inStock", "true")).lower()
-            in_stock = stock_str not in ["false", "0", "out of stock"]
-        except:
-            in_stock = True
-
-        if not price:
-            print(f"  ⚠️  Price not in known paths. Full response: {json.dumps(data)[:500]}")
+            # Stock
+            stock_val = str(match.get("inStock", match.get("in_stock", "true"))).lower()
+            in_stock = stock_val not in ["false", "0", "out of stock"]
+        else:
+            print(f"  ⚠️  No results found. Full response: {json.dumps(data)[:500]}")
 
         return price, in_stock
 
@@ -329,7 +319,7 @@ async def main():
                 # ── Costco: use API directly, no browser ──────────────────
                 if effective_site == "costco":
                     print(f"  🏪 Costco — using direct API (no browser)")
-                    price, in_stock = scrape_costco_api(url)
+                    price, in_stock = scrape_costco_api(url, product["name"])
                 else:
                     # ── All other sites: use browser ──────────────────────
                     context = await browser.new_context(
