@@ -1,15 +1,15 @@
-name: RFD Deal Monitor
+name: Price Scraper
 
 on:
   schedule:
-    - cron: '0 */4 * * *'   # Every 4 hours
-  workflow_dispatch:
+    - cron: '0 */8 * * *'   # Every 8 hours
+  workflow_dispatch:          # Manual trigger + triggered by RFD monitor
 
 permissions:
   contents: write
 
 jobs:
-  monitor:
+  scrape:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
@@ -26,11 +26,13 @@ jobs:
           playwright install chromium
           playwright install-deps chromium
 
-      - name: Run RFD monitor
+      - name: Run scraper
         env:
-          GH_PAT:              ${{ secrets.GH_PAT }}
-          GITHUB_REPOSITORY:   ${{ github.repository }}
-        run: python rfd_monitor.py
+          PROXY_HOST:     ${{ secrets.PROXY_HOST }}
+          PROXY_PORT:     ${{ secrets.PROXY_PORT }}
+          PROXY_USERNAME: ${{ secrets.PROXY_USERNAME }}
+          PROXY_PASSWORD: ${{ secrets.PROXY_PASSWORD }}
+        run: python scrape.py
 
       - name: Commit updated prices.json
         run: |
@@ -38,5 +40,5 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add prices.json
           git pull --rebase origin main
-          git diff --cached --quiet || git commit -m "chore: rfd check $(date -u '+%Y-%m-%d %H:%M UTC')"
+          git diff --cached --quiet || git commit -m "chore: update prices $(date -u '+%Y-%m-%d %H:%M UTC')"
           git push
