@@ -21,6 +21,18 @@
       },
       "rfd_deal": null,
       "added_at": "2026-03-07T11:16:21.810Z"
+    },
+    {
+      "id": "1772882590760",
+      "name": "Apple Watch Series 10 42mm GPS",
+      "category": "Electronics",
+      "sites_to_track": [
+        "amazon",
+        "walmart"
+      ],
+      "site_data": {},
+      "rfd_deal": null,
+      "added_at": "2026-03-07T11:23:10.760Z"
     }
   ]
 }
