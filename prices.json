@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-03-07T09:40:10.678878+00:00",
+  "last_updated": "2026-03-07T09:45:58.277905+00:00",
   "products": [
     {
       "id": "4000077852",
@@ -8,8 +8,8 @@
       "url": "https://www.costco.ca/optimum-nutrition-gold-standard-100-whey-protein-extreme-chocolate-shake-256-kg.product.4000077852.html",
       "price": "Error",
       "in_stock": null,
-      "last_checked": "2026-03-07T09:40:06.556233+00:00",
-      "error": "Page.goto: net::ERR_HTTP2_PROTOCOL_ERROR at https://www.costco.ca/optimum-nutrition-gold-standard-100-whey-protein-extreme-chocolate-shake-256-kg.product.4000077852.html\nCall log:\n  - navigating to \"https://www.costco.ca/optimum-nutrition-gold-standard-100-whey-protein-extreme-chocolate-shake-256-kg.product.4000077852.html\", waiting until \"domcontentloaded\"\n"
+      "last_checked": "2026-03-07T09:45:07.184843+00:00",
+      "error": "Page.goto: Timeout 40000ms exceeded.\nCall log:\n  - navigating to \"https://www.costco.ca/\", waiting until \"domcontentloaded\"\n"
     },
     {
       "id": "100417020",
@@ -18,8 +18,8 @@
       "url": "https://www.costco.ca/kirkland-signature-protein-bars-20-count.product.100417020.html",
       "price": "Error",
       "in_stock": null,
-      "last_checked": "2026-03-07T09:40:08.638847+00:00",
-      "error": "Page.goto: net::ERR_HTTP2_PROTOCOL_ERROR at https://www.costco.ca/kirkland-signature-protein-bars-20-count.product.100417020.html\nCall log:\n  - navigating to \"https://www.costco.ca/kirkland-signature-protein-bars-20-count.product.100417020.html\", waiting until \"domcontentloaded\"\n"
+      "last_checked": "2026-03-07T09:45:52.232924+00:00",
+      "error": "Page.goto: Timeout 40000ms exceeded.\nCall log:\n  - navigating to \"https://www.costco.ca/\", waiting until \"domcontentloaded\"\n"
     }
   ]
 }
