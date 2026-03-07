@@ -399,53 +399,71 @@ function showAddForm(){
   renderForm();
 }
 
+let siteUrls = {costco:"",amazon:"",walmart:"",bestbuy:""};
+
 function renderForm(){
   const name=document.getElementById("pname")?.value||"";
+  // Preserve existing url inputs
+  SITES.forEach(s=>{ const el=document.getElementById(`url-${s}`); if(el) siteUrls[s]=el.value; });
+  const anyUrl = Object.values(siteUrls).some(v=>v.trim());
   document.getElementById("add-form").innerHTML=`
     <div class="form-card">
       <div class="form-title">Add New Product</div>
-      <div class="form-sub">Type a product name — scraper auto-finds it on each selected site.</div>
+      <div class="form-sub">Paste the product page URL for each site you want to track.</div>
       <div class="form-grid">
         <div>
           <label>PRODUCT NAME *</label>
-          <input id="pname" placeholder="e.g. ON Gold Standard Whey 2.56kg" value="${name}" oninput="renderForm()"/>
-          <div class="hint">💡 Include size/model for best match</div>
+          <input id="pname" placeholder="e.g. Apple Watch Series 10 42mm" value="${name}" oninput="renderForm()"/>
         </div>
         <div>
           <label>CATEGORY</label>
           <select id="pcat">${CATEGORIES.map(c=>`<option>${c}</option>`).join("")}</select>
         </div>
       </div>
-      <label style="margin-bottom:10px;display:block;">TRACK ON WHICH SITES?</label>
-      <div class="sites-picker">
+      <label style="margin-bottom:10px;display:block;">PASTE PRODUCT URLs</label>
+      <div style="display:grid;gap:10px;margin-bottom:20px;">
         ${SITES.map(site=>`
-          <div class="site-tile${selectedSites[site]?" on":""}" style="--c8:${SITE_META[site].color}18;border-color:${selectedSites[site]?SITE_META[site].color:"#e5e7eb"};" onclick="toggleSite('${site}')">
-            <div class="site-tile-icon">${SITE_META[site].icon}</div>
-            <div class="site-tile-label" style="color:${selectedSites[site]?SITE_META[site].color:"#9ca3af"};">${SITE_META[site].label}</div>
-            <div class="site-tile-check">${selectedSites[site]?"✓ selected":"click to add"}</div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:80px;flex-shrink:0;">
+              <span style="font-size:16px;">${SITE_META[site].icon}</span>
+              <span style="font-size:10px;color:${SITE_META[site].color};font-weight:600;margin-left:4px;">${SITE_META[site].label}</span>
+            </div>
+            <input id="url-${site}" value="${siteUrls[site]||""}" placeholder="https://www.${site==="bestbuy"?"bestbuy":site}.ca/... (optional)" oninput="renderForm()" style="flex:1;font-size:11px;"/>
           </div>`).join("")}
       </div>
-      ${name&&Object.values(selectedSites).some(Boolean)?`
-      <div class="preview-box">
-        <div class="preview-title">SCRAPER WILL SEARCH FOR</div>
-        ${SITES.filter(s=>selectedSites[s]).map(s=>`<div class="preview-row"><span style="color:${SITE_META[s].color};font-weight:600;">${SITE_META[s].label}</span> → <span style="color:#1a1a2e;">"${name}"</span> <span style="color:#c4b5fd;">(auto-discovered)</span></div>`).join("")}
-      </div>`:""}
+      <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:10px;color:#15803d;">
+        💡 Go to each site, search for your product, open the product page, copy the URL and paste it above. Only fill in the sites you want to track.
+      </div>
       <div class="form-actions">
-        <button class="btn-primary" ${!name||!Object.values(selectedSites).some(Boolean)?"disabled":""} onclick="addProduct()">+ ADD PRODUCT</button>
+        <button class="btn-primary" ${!name||!anyUrl?"disabled":""} onclick="addProduct()">+ ADD PRODUCT</button>
         <button class="btn-secondary" onclick="cancelAdd()">CANCEL</button>
+        ${!anyUrl?"<span style='font-size:10px;color:#ef4444;'>Paste at least one URL</span>":""}
       </div>
     </div>`;
+  // Restore url values
+  SITES.forEach(s=>{ const el=document.getElementById(`url-${s}`); if(el) el.value=siteUrls[s]||""; });
 }
 
 function toggleSite(site){ selectedSites[site]=!selectedSites[site]; renderForm(); }
 
-function cancelAdd(){ document.getElementById("add-form").style.display="none"; document.getElementById("add-form").innerHTML=""; document.getElementById("add-btn").style.display="block"; }
+function cancelAdd(){
+  document.getElementById("add-form").style.display="none";
+  document.getElementById("add-form").innerHTML="";
+  document.getElementById("add-btn").style.display="block";
+  siteUrls={costco:"",amazon:"",walmart:"",bestbuy:""};
+}
 
 async function addProduct(){
   const name=document.getElementById("pname").value.trim();
   const cat=document.getElementById("pcat").value;
-  if(!name||!Object.values(selectedSites).some(Boolean)) return;
-  const product={id:Date.now().toString(),name,category:cat,sites_to_track:SITES.filter(s=>selectedSites[s]),site_data:{},rfd_deal:null,added_at:new Date().toISOString()};
+  // Read URLs from inputs
+  SITES.forEach(s=>{ const el=document.getElementById(`url-${s}`); if(el) siteUrls[s]=el.value.trim(); });
+  const activeSites=SITES.filter(s=>siteUrls[s]);
+  if(!name||!activeSites.length) return;
+  // Build site_data with URLs pre-filled
+  const site_data={};
+  activeSites.forEach(s=>{ site_data[s]={url:siteUrls[s],price:null,was:null,in_stock:null,history:[],last_checked:null,error:null}; });
+  const product={id:Date.now().toString(),name,category:cat,sites_to_track:activeSites,site_data,rfd_deal:null,added_at:new Date().toISOString()};
   if(!appData) appData={last_updated:null,products:[]};
   appData.products.push(product);
   cancelAdd();
