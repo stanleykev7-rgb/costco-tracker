@@ -192,14 +192,20 @@ const GITHUB_REPO = "costco-tracker";
 const RAW_URL = "./prices.json";  // same repo = no CORS
 const API_URL = `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/prices.json`;
 
-const SITES = ["costco","amazon","walmart","bestbuy"];
+const SITES = ["costco","amazon","walmart","bestbuy","canadiantire","staples","thesource","londondrugs","sportchek","homedepot"];
 const SITE_META = {
-  costco:  {label:"Costco",  color:"#0061a3", icon:"🏪"},
-  amazon:  {label:"Amazon",  color:"#f59e0b", icon:"📦"},
-  walmart: {label:"Walmart", color:"#0071ce", icon:"🛒"},
-  bestbuy: {label:"Best Buy",color:"#6366f1", icon:"💻"},
+  costco:       {label:"Costco",          color:"#0061a3", icon:"🏪"},
+  amazon:       {label:"Amazon",          color:"#f59e0b", icon:"📦"},
+  walmart:      {label:"Walmart",         color:"#0071ce", icon:"🛒"},
+  bestbuy:      {label:"Best Buy",        color:"#6366f1", icon:"💻"},
+  canadiantire: {label:"Canadian Tire",   color:"#cc0000", icon:"🔧"},
+  staples:      {label:"Staples",         color:"#cc0000", icon:"📎"},
+  thesource:    {label:"The Source",      color:"#e63312", icon:"🔌"},
+  londondrugs:  {label:"London Drugs",    color:"#003087", icon:"💊"},
+  sportchek:    {label:"Sport Chek",      color:"#e2001a", icon:"⚽"},
+  homedepot:    {label:"Home Depot",      color:"#f96302", icon:"🔨"},
 };
-const CHART_COLORS = ["#0061a3","#f59e0b","#0071ce","#6366f1"];
+const CHART_COLORS = ["#0061a3","#f59e0b","#0071ce","#6366f1","#cc0000","#cc0000","#e63312","#003087","#e2001a","#f96302"];
 const CATEGORIES = ["Protein","Supplements","Electronics","Snacks","Home","Appliances","General"];
 
 let appData = null;
