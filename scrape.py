@@ -16,7 +16,8 @@ USE_PROXY      = all([PROXY_HOST, PROXY_PORT, PROXY_USERNAME, PROXY_PASSWORD])
 PROXIES        = {"http": f"http://{PROXY_USERNAME}:{PROXY_PASSWORD}@{PROXY_HOST}:{PROXY_PORT}",
                   "https": f"http://{PROXY_USERNAME}:{PROXY_PASSWORD}@{PROXY_HOST}:{PROXY_PORT}"} if USE_PROXY else {}
 
-PRICES_FILE = "prices.json"
+PRICES_FILE   = "prices.json"
+RAPIDAPI_KEY  = os.environ.get("RAPIDAPI_KEY", "")
 
 PRICE_SELECTORS = {
     "amazon":       [".a-price .a-offscreen", "#corePriceDisplay_desktop_feature_div .a-offscreen", "#price_inside_buybox", "#priceblock_ourprice", "#priceblock_dealprice"],
@@ -84,64 +85,48 @@ def extract_price_from_text(text):
 
 # ── COSTCO: Direct API (no browser needed) ───────────────────────────────────
 def scrape_costco_api(url):
-    """Call Costco's internal product API directly."""
+    """Fetch Costco price via RapidAPI Real-Time Costco Data (bypasses Akamai)."""
+    if not RAPIDAPI_KEY:
+        print(f"  ❌ RAPIDAPI_KEY not set in secrets")
+        return None, None
+
     product_id = extract_product_id(url)
     if not product_id:
         print(f"  ❌ Could not extract Costco product ID from URL")
         return None, None
 
-    print(f"  🔑 Costco API: product ID {product_id}")
-
-    # Build proxy dict fresh each call (avoids import-time env var issues)
-    proxies = {}
-    if all([PROXY_HOST, PROXY_PORT, PROXY_USERNAME, PROXY_PASSWORD]):
-        proxy_url = f"http://{PROXY_USERNAME}:{PROXY_PASSWORD}@{PROXY_HOST}:{PROXY_PORT}"
-        proxies = {"http": proxy_url, "https": proxy_url}
-        print(f"  🔒 Using proxy for Costco API")
-    else:
-        print(f"  ⚠️  No proxy for Costco API")
-
-    session = requests.Session()
-    session.headers.update({
-        "User-Agent": random.choice(USER_AGENTS),
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-        "Accept-Language": "en-CA,en;q=0.9",
-        "Accept-Encoding": "gzip, deflate, br",
-        "Referer": "https://www.costco.ca/",
-        "Connection": "keep-alive",
-    })
+    print(f"  🔑 RapidAPI Costco: product ID {product_id}")
 
     try:
-        # First visit the homepage to get cookies
-        print(f"  🍪 Getting Costco session cookies...")
-        session.get("https://www.costco.ca/", proxies=proxies, timeout=20, verify=True)
-
-        # Now call the API with cookies
-        api_url = f"https://www.costco.ca/AjaxGetProductDetailView?productId={product_id}"
-        session.headers.update({
-            "Accept": "application/json, text/javascript, */*; q=0.01",
-            "X-Requested-With": "XMLHttpRequest",
-            "Referer": url,
-        })
-        resp = session.get(api_url, proxies=proxies, timeout=20, verify=True)
-        print(f"  📡 API status: {resp.status_code}")
+        resp = requests.get(
+            "https://real-time-costco-data.p.rapidapi.com/product",
+            headers={
+                "x-rapidapi-host": "real-time-costco-data.p.rapidapi.com",
+                "x-rapidapi-key": RAPIDAPI_KEY,
+            },
+            params={"item_id": product_id, "warehouse_id": "businessCenterToronto"},
+            timeout=20
+        )
+        print(f"  📡 RapidAPI status: {resp.status_code}")
         if resp.status_code != 200:
-            raise Exception(f"API returned {resp.status_code}")
+            raise Exception(f"RapidAPI returned {resp.status_code}: {resp.text[:200]}")
 
         data = resp.json()
+        print(f"  📦 Response keys: {list(data.keys())[:10]}")
 
-        # Navigate the response structure
         price = None
         in_stock = True
 
-        # Try common price paths in the response
+        # Try all known price paths
         for path in [
-            ["productDetailVO", "finalPrice"],
-            ["productDetailVO", "yourPrice", "price"],
-            ["productDetailVO", "salePrice"],
-            ["productDetailVO", "price"],
+            ["product", "price"],
+            ["product", "salePrice"],
+            ["product", "yourPrice"],
+            ["product", "finalPrice"],
+            ["price"],
+            ["salePrice"],
+            ["yourPrice"],
             ["finalPrice"],
-            ["yourPrice", "price"],
         ]:
             try:
                 val = data
@@ -150,36 +135,25 @@ def scrape_costco_api(url):
                 if val:
                     price = extract_price_from_text(str(val))
                     if price:
-                        print(f"  💰 Costco API [{'.'.join(path)}]: ${price}")
+                        print(f"  💰 [{'.'.join(path)}]: ${price}")
                         break
             except (KeyError, TypeError):
                 continue
 
         # Stock status
         try:
-            availability = str(data.get("productDetailVO", {}).get("availability", "")).lower()
-            in_stock = "out" not in availability and "unavailable" not in availability
+            stock_str = str(data.get("product", data).get("inStock", "true")).lower()
+            in_stock = stock_str not in ["false", "0", "out of stock"]
         except:
             in_stock = True
 
         if not price:
-            # Dump top-level keys for debugging
-            print(f"  ⚠️  Price not found in API. Top keys: {list(data.keys())[:10]}")
+            print(f"  ⚠️  Price not in known paths. Full response: {json.dumps(data)[:500]}")
 
         return price, in_stock
 
     except Exception as e:
-        print(f"  ❌ Costco API error: {e}")
-        # Fall back to regex on raw response text
-        try:
-            matches = re.findall(r'"(?:finalPrice|yourPrice|salePrice|price)"\s*:\s*"?(\d+\.?\d*)"?', resp.text)
-            for m in matches:
-                val = float(m)
-                if 2 < val < 5000:
-                    print(f"  💰 Costco API regex fallback: ${val}")
-                    return val, True
-        except:
-            pass
+        print(f"  ❌ RapidAPI Costco error: {e}")
         return None, None
 
 # ── BROWSER: All other sites ──────────────────────────────────────────────────
@@ -336,6 +310,10 @@ async def main():
             print(f"\n📦 {product['name']}")
             site_data = product.setdefault("site_data", {})
 
+            if product.get("paused"):
+                print(f"  ⏸️  Skipping — tracking paused")
+                continue
+
             for site_key, site_info in site_data.items():
                 url = site_info.get("url")
                 if url and not url.startswith("http"):
@@ -385,6 +363,9 @@ async def main():
                     else:
                         history.append({"d": today, "p": price})
                     history = history[-60:]
+
+                # Increment scrape count
+                site_info["scrape_count"] = site_info.get("scrape_count", 0) + 1
 
                 was = site_info.get("price")
                 site_info.update({
