@@ -1,0 +1,41 @@
+name: RFD Deal Monitor
+
+on:
+  schedule:
+    - cron: '0 */4 * * *'   # Every 4 hours
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install playwright requests
+          playwright install chromium
+          playwright install-deps chromium
+
+      - name: Run RFD monitor
+        env:
+          GH_PAT:              ${{ secrets.GH_PAT }}
+          GITHUB_REPOSITORY:   ${{ github.repository }}
+        run: python rfd_monitor.py
+
+      - name: Commit updated prices.json
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add prices.json
+          git diff --cached --quiet || git commit -m "chore: rfd check $(date -u '+%Y-%m-%d %H:%M UTC')"
+          git push
