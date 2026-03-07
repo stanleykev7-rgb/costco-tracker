@@ -172,7 +172,7 @@ async def scrape_price(page, url, site):
     """Visit a product page and extract price + stock status."""
     print(f"  🌐 [{site}] {url[:70]}...")
     try:
-        await page.goto(url, timeout=40000, wait_until="networkidle")
+        await page.goto(url, timeout=40000, wait_until="domcontentloaded")
         extra_wait = SITE_WAIT.get(site, 3000) + random.randint(500, 1500)
         await page.wait_for_timeout(extra_wait)
         await page.evaluate("window.scrollBy(0, 500)")
