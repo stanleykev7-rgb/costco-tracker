@@ -1,4 +1,16 @@
 {
   "last_updated": null,
-  "products": []
+  "products": [
+    {
+      "id": "1772882181810",
+      "name": "Apple Watch",
+      "category": "Electronics",
+      "sites_to_track": [
+        "amazon"
+      ],
+      "site_data": {},
+      "rfd_deal": null,
+      "added_at": "2026-03-07T11:16:21.810Z"
+    }
+  ]
 }
