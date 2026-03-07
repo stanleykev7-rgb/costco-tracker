@@ -278,7 +278,18 @@ async def scrape_price(page, url, site):
         if price:
             print(f"  ✅ ${price} | {'In stock' if in_stock else 'OUT OF STOCK'}")
         else:
-            print(f"  ❌ Price not found")
+            print(f"  ❌ Price not found — dumping price-related HTML for debugging:")
+            try:
+                # Dump any element that contains a $ sign and looks like a price
+                snippets = await page.eval_on_selector_all("*", """els => els
+                    .filter(e => e.children.length === 0 && /\$\s*\d+/.test(e.textContent))
+                    .slice(0, 15)
+                    .map(e => e.tagName + ' class=' + e.className + ' => ' + e.textContent.trim().slice(0,80))
+                """)
+                for s in snippets:
+                    print(f"    📄 {s}")
+            except Exception as de:
+                print(f"    ⚠️ Debug dump failed: {de}")
 
         return price, in_stock
 
