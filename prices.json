@@ -1,4 +1,26 @@
 {
   "last_updated": "2026-03-07T13:30:52.345907+00:00",
-  "products": []
+  "products": [
+    {
+      "id": "1772902118059",
+      "name": "Logitech MX Master 4",
+      "category": "Electronics",
+      "sites_to_track": [
+        "amazon"
+      ],
+      "site_data": {
+        "amazon": {
+          "url": "amazon.ca/Logitech-Ergonomic-Performance-Ultra-Fast-Scrolling/dp/B0FC5SJNQX/ref=lp_206837354011_1_4?pf_rd_p=bdb9c561-5fbc-41bd-9c6c-a048ad366969&pf_rd_r=9MM9VNBHQN3B04DYJKHC&sbo=RZvfv%2F%2FHxDF%2BO5021pAnSA%3D%3D",
+          "price": null,
+          "was": null,
+          "in_stock": null,
+          "history": [],
+          "last_checked": null,
+          "error": null
+        }
+      },
+      "rfd_deal": null,
+      "added_at": "2026-03-07T16:48:38.059Z"
+    }
+  ]
 }
