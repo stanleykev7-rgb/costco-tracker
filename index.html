@@ -11,12 +11,14 @@
   *{box-sizing:border-box;margin:0;padding:0;}
   body{background:#f8f7f4;font-family:'DM Mono',monospace;min-height:100vh;}
   .header{background:#1a1a2e;padding:22px 32px 0;}
-  .header-top{display:flex;align-items:center;gap:12;margin-bottom:4px;}
   .header-title{font-family:'Instrument Serif',serif;font-size:26px;color:#f8f7f4;}
   .header-sub{font-size:10px;color:#4b5563;letter-spacing:0.15em;}
   .btn{background:transparent;border:1px solid #2d2d4e;border-radius:5px;padding:4px 12px;font-family:'DM Mono',monospace;font-size:10px;color:#6b7280;cursor:pointer;transition:all 0.15s;}
   .btn:hover{border-color:#6366f1;color:#a78bfa;}
   .btn.active{color:#6ee7b7;border-color:#6ee7b7;}
+  .btn-scrape{background:#6366f1;border:none;border-radius:5px;padding:5px 14px;font-family:'DM Mono',monospace;font-size:10px;color:white;cursor:pointer;transition:all 0.15s;letter-spacing:0.05em;}
+  .btn-scrape:hover{background:#4f46e5;}
+  .btn-scrape:disabled{background:#4b5563;cursor:not-allowed;}
   .tabs{display:flex;gap:0;margin-top:12px;}
   .tab{font-size:11px;padding:8px 20px;cursor:pointer;color:#6b7280;border-bottom:2px solid transparent;letter-spacing:0.05em;transition:all 0.15s;}
   .tab.active{color:#a78bfa;border-bottom-color:#a78bfa;}
@@ -27,10 +29,13 @@
   .product-card{background:white;border:1px solid #e5e7eb;border-radius:12px;margin-bottom:12px;overflow:hidden;transition:box-shadow 0.2s;}
   .product-card:hover{box-shadow:0 4px 20px rgba(0,0,0,0.06);}
   .product-card.deal{border-color:#fde047;}
+  .product-card.paused{opacity:0.6;border-style:dashed;}
   .deal-banner{background:#fef08a;padding:5px 16px;font-size:10px;color:#854d0e;display:flex;align-items:center;gap:6px;}
+  .paused-banner{background:#f3f4f6;padding:5px 16px;font-size:10px;color:#6b7280;display:flex;align-items:center;gap:6px;}
   .product-header{padding:14px 18px;display:flex;align-items:center;gap:14px;cursor:pointer;}
   .product-name{font-family:'Instrument Serif',serif;font-size:16px;color:#1a1a2e;}
   .category-badge{font-size:9px;color:#9ca3af;background:#f3f4f6;padding:2px 7px;border-radius:20px;}
+  .scrape-count{font-size:9px;color:#c4b5fd;background:#f5f3ff;padding:2px 7px;border-radius:20px;}
   .best-price{font-size:22px;color:#15803d;font-weight:600;}
   .sites-grid{display:grid;gap:1px;background:#f9fafb;border-top:1px solid #f3f4f6;}
   .site-cell{background:white;padding:12px 14px;border-left:3px solid transparent;}
@@ -59,26 +64,18 @@
   input,select{width:100%;padding:9px 12px;border:1px solid #e5e7eb;border-radius:6px;font-family:'DM Mono',monospace;font-size:12px;outline:none;background:white;}
   input:focus,select:focus{border-color:#6366f1;}
   .hint{font-size:9px;color:#c4b5fd;margin-top:4px;}
-  .sites-picker{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:20px;}
-  .site-tile{border:2px solid #e5e7eb;border-radius:10px;padding:12px 10px;cursor:pointer;text-align:center;transition:all 0.15s;user-select:none;}
-  .site-tile.on{background:var(--c8);}
-  .site-tile-icon{font-size:20px;margin-bottom:4px;}
-  .site-tile-label{font-size:11px;font-weight:400;color:#9ca3af;}
-  .site-tile.on .site-tile-label{font-weight:600;}
-  .site-tile-check{font-size:9px;color:#d1d5db;margin-top:3px;}
-  .site-tile.on .site-tile-check{color:#15803d;}
-  .preview-box{background:#f8f7f4;border:1px solid #e5e7eb;border-radius:8px;padding:12px 14px;margin-bottom:16px;}
-  .preview-title{font-size:9px;color:#9ca3af;letter-spacing:0.1em;margin-bottom:6px;}
-  .preview-row{font-size:11px;color:#6b7280;margin-bottom:3px;}
-  .form-actions{display:flex;gap:8px;align-items:center;}
+  .form-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
   .btn-primary{background:#1a1a2e;color:white;border:none;border-radius:6px;padding:9px 20px;font-family:'DM Mono',monospace;font-size:12px;cursor:pointer;letter-spacing:0.05em;}
   .btn-primary:disabled{background:#e5e7eb;color:#9ca3af;cursor:not-allowed;}
   .btn-secondary{background:white;color:#6b7280;border:1px solid #e5e7eb;border-radius:6px;padding:9px 20px;font-family:'DM Mono',monospace;font-size:12px;cursor:pointer;}
   .btn-danger{background:white;border:1px solid #fecaca;border-radius:5px;padding:3px 8px;cursor:pointer;font-family:'DM Mono',monospace;font-size:10px;color:#ef4444;}
+  .btn-pause{background:white;border:1px solid #e5e7eb;border-radius:5px;padding:3px 8px;cursor:pointer;font-family:'DM Mono',monospace;font-size:10px;color:#6b7280;}
+  .btn-pause.paused{border-color:#6366f1;color:#6366f1;}
   .alert{border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:11px;}
   .alert-warn{background:#fef3c7;border:1px solid #fcd34d;color:#92400e;}
   .alert-err{background:#fef2f2;border:1px solid #fecaca;color:#dc2626;}
   .alert-info{background:#eff6ff;border:1px solid #bfdbfe;color:#1d4ed8;}
+  .alert-success{background:#f0fdf4;border:1px solid #bbf7d0;color:#15803d;}
   .alert-deals{background:#fefce8;border:1px solid #fde047;}
   .deals-title{font-size:10px;color:#854d0e;letter-spacing:0.1em;margin-bottom:8px;}
   .deal-row{display:flex;align-items:center;gap:12px;margin-bottom:4px;flex-wrap:wrap;}
@@ -100,32 +97,32 @@
   .gauge-header{display:flex;justify-content:space-between;margin-bottom:5px;font-size:11px;}
   .gauge-track{height:6px;background:#f3f4f6;border-radius:99px;overflow:hidden;}
   .gauge-fill{height:100%;border-radius:99px;transition:width 1s ease;}
-  .rfd-deals-box{margin-top:12px;background:#fefce8;border-radius:8px;padding:10px 12px;}
+  .scrape-spinner{display:inline-block;width:10px;height:10px;border:2px solid #ffffff44;border-top-color:white;border-radius:50%;animation:spin 0.6s linear infinite;margin-right:5px;}
+  @keyframes spin{to{transform:rotate(360deg);}}
   @media(max-width:600px){
     .content{padding:16px;}
     .summary{padding:12px 16px;}
     .header{padding:16px 16px 0;}
     .sites-grid{grid-template-columns:repeat(2,1fr)!important;}
     .form-grid{grid-template-columns:1fr;}
-    .sites-picker{grid-template-columns:repeat(2,1fr);}
     .stats-grid{grid-template-columns:1fr;}
   }
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
 <div class="header">
-  <div class="header-top" style="display:flex;align-items:center;gap:12px;margin-bottom:4px;">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px;">
     <span class="header-title">Price Watchlist</span>
     <span class="header-sub">CANADA</span>
-    <div style="margin-left:auto;display:flex;gap:8px;">
+    <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
+      <button class="btn-scrape" id="scrapeBtn" onclick="triggerScrape()">⚡ SCRAPE NOW</button>
       <button class="btn" id="patBtn" onclick="togglePat()">🔑 SET PAT</button>
       <button class="btn" onclick="fetchData()">↻ REFRESH</button>
     </div>
   </div>
   <div id="patBox" class="pat-box" style="display:none;">
-    <div class="pat-label">GitHub PAT — stored in localStorage, used only for saving products to your repo</div>
+    <div class="pat-label">GitHub PAT — stored in localStorage, used for saving products and triggering scrapes</div>
     <div class="pat-row">
       <input type="password" class="pat-input" id="patInput" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"/>
       <button class="btn-save-pat" onclick="savePat()">SAVE</button>
@@ -138,23 +135,20 @@
   </div>
 </div>
 
-<!-- SUMMARY BAR -->
 <div class="summary">
   <div><div class="stat-val" id="s-products">0</div><div class="stat-label">PRODUCTS</div></div>
   <div><div class="stat-val" id="s-drops" style="color:#15803d">0</div><div class="stat-label">PRICE DROPS</div></div>
   <div><div class="stat-val" id="s-deals">0</div><div class="stat-label">RFD DEALS</div></div>
+  <div><div class="stat-val" id="s-total-scrapes" style="color:#6366f1">0</div><div class="stat-label">TOTAL SCRAPES</div></div>
   <div><div class="stat-val" id="s-sites">0</div><div class="stat-label">SITES ACTIVE</div></div>
   <div style="margin-left:auto;font-size:10px;color:#d1d5db;" id="s-updated">Loading...</div>
 </div>
 
-<!-- CONTENT -->
 <div class="content">
-
-  <!-- PRICES TAB -->
   <div id="page-prices">
-    <div id="alert-pat" class="alert alert-warn" style="display:none;">⚠ Set your GitHub PAT (🔑 button top right) to add or remove products</div>
+    <div id="alert-pat" class="alert alert-warn" style="display:none;">⚠ Set your GitHub PAT (🔑 button top right) to add/remove products and trigger scrapes</div>
     <div id="alert-err" class="alert alert-err" style="display:none;"></div>
-    <div id="alert-saving" class="alert alert-info" style="display:none;">⏳ Saving to GitHub...</div>
+    <div id="alert-msg" class="alert" style="display:none;"></div>
     <div id="deals-box" class="alert alert-deals" style="display:none;">
       <div class="deals-title">🔥 RFD DEAL ALERTS</div>
       <div id="deals-list"></div>
@@ -165,111 +159,124 @@
     <button class="add-btn" id="add-btn" style="display:none;" onclick="showAddForm()">+ ADD PRODUCT</button>
   </div>
 
-  <!-- STATS TAB -->
   <div id="page-stats" style="display:none;">
     <div class="stats-grid">
       <div class="stats-card" style="grid-column:1/-1;">
         <div class="stats-title">GitHub Actions Usage</div>
         <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px;" id="gh-stats"></div>
-        <div class="gauge-wrap" id="gh-gauge"></div>
+        <div id="gh-gauge"></div>
       </div>
       <div class="stats-card">
         <div class="stats-title">Residential Proxy</div>
         <div id="proxy-stats"></div>
       </div>
       <div class="stats-card">
-        <div class="stats-title">Product Breakdown</div>
+        <div class="stats-title">Scrape History by Product</div>
         <div id="product-breakdown"></div>
       </div>
     </div>
   </div>
-
 </div>
 
 <script>
 const GITHUB_USERNAME = "stanleykev7-rgb";
-const GITHUB_REPO = "costco-tracker";
-const RAW_URL = "./prices.json";  // same repo = no CORS
-const API_URL = `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/prices.json`;
+const GITHUB_REPO     = "costco-tracker";
+const RAW_URL         = "./prices.json";
+const API_URL         = `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/prices.json`;
+const WORKFLOW_URL    = `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/actions/workflows/scrape.yml/dispatches`;
 
 const SITES = ["costco","amazon","walmart","bestbuy","canadiantire","staples","thesource","londondrugs","sportchek","homedepot"];
 const SITE_META = {
-  costco:       {label:"Costco",          color:"#0061a3", icon:"🏪"},
-  amazon:       {label:"Amazon",          color:"#f59e0b", icon:"📦"},
-  walmart:      {label:"Walmart",         color:"#0071ce", icon:"🛒"},
-  bestbuy:      {label:"Best Buy",        color:"#6366f1", icon:"💻"},
-  canadiantire: {label:"Canadian Tire",   color:"#cc0000", icon:"🔧"},
-  staples:      {label:"Staples",         color:"#cc0000", icon:"📎"},
-  thesource:    {label:"The Source",      color:"#e63312", icon:"🔌"},
-  londondrugs:  {label:"London Drugs",    color:"#003087", icon:"💊"},
-  sportchek:    {label:"Sport Chek",      color:"#e2001a", icon:"⚽"},
-  homedepot:    {label:"Home Depot",      color:"#f96302", icon:"🔨"},
+  costco:       {label:"Costco",        color:"#0061a3", icon:"🏪"},
+  amazon:       {label:"Amazon",        color:"#f59e0b", icon:"📦"},
+  walmart:      {label:"Walmart",       color:"#0071ce", icon:"🛒"},
+  bestbuy:      {label:"Best Buy",      color:"#6366f1", icon:"💻"},
+  canadiantire: {label:"Canadian Tire", color:"#cc0000", icon:"🔧"},
+  staples:      {label:"Staples",       color:"#cc0000", icon:"📎"},
+  thesource:    {label:"The Source",    color:"#e63312", icon:"🔌"},
+  londondrugs:  {label:"London Drugs",  color:"#003087", icon:"💊"},
+  sportchek:    {label:"Sport Chek",    color:"#e2001a", icon:"⚽"},
+  homedepot:    {label:"Home Depot",    color:"#f96302", icon:"🔨"},
 };
 const CHART_COLORS = ["#0061a3","#f59e0b","#0071ce","#6366f1","#cc0000","#cc0000","#e63312","#003087","#e2001a","#f96302"];
 const CATEGORIES = ["Protein","Supplements","Electronics","Snacks","Home","Appliances","General"];
 
-let appData = null;
-let currentSha = null;
-let expandedId = null;
-let charts = {};
+let appData=null, currentSha=null, charts={};
+let siteUrls={};
 
-// ── PAT ──────────────────────────────────────────────────────────────────────
+// ── PAT ───────────────────────────────────────────────────────────────────────
 function getPat(){ return localStorage.getItem("gh_pat")||""; }
-function savePat(){ const v=document.getElementById("patInput").value; localStorage.setItem("gh_pat",v); document.getElementById("patBox").style.display="none"; document.getElementById("patBtn").textContent="🔒 PAT SET"; document.getElementById("patBtn").classList.add("active"); fetchData(); }
-function clearPat(){ localStorage.removeItem("gh_pat"); document.getElementById("patInput").value=""; document.getElementById("patBtn").textContent="🔑 SET PAT"; document.getElementById("patBtn").classList.remove("active"); document.getElementById("patBox").style.display="none"; }
+function savePat(){ const v=document.getElementById("patInput").value; localStorage.setItem("gh_pat",v); document.getElementById("patBox").style.display="none"; updatePatBtn(); fetchData(); }
+function clearPat(){ localStorage.removeItem("gh_pat"); document.getElementById("patInput").value=""; updatePatBtn(); document.getElementById("patBox").style.display="none"; }
 function togglePat(){ const b=document.getElementById("patBox"); b.style.display=b.style.display==="none"?"block":"none"; document.getElementById("patInput").value=getPat(); }
+function updatePatBtn(){ const p=getPat(); document.getElementById("patBtn").textContent=p?"🔒 PAT SET":"🔑 SET PAT"; document.getElementById("patBtn").classList.toggle("active",!!p); }
 
 // ── UTILS ─────────────────────────────────────────────────────────────────────
 function timeAgo(iso){ if(!iso)return"never"; const d=Math.floor((Date.now()-new Date(iso))/1000); if(d<60)return`${d}s ago`; if(d<3600)return`${Math.floor(d/60)}m ago`; if(d<86400)return`${Math.floor(d/3600)}h ago`; return`${Math.floor(d/86400)}d ago`; }
-function getBestSite(sd={}){ let b=null,bp=Infinity; for(const[s,d]of Object.entries(sd)){if(d?.price&&d?.in_stock&&d.price<bp){bp=d.price;b=s;}} return b; }
+function getBestSite(sd={}){ let b=null,bp=Infinity; for(const[s,d]of Object.entries(sd||{})){if(d?.price&&d?.in_stock&&d.price<bp){bp=d.price;b=s;}} return b; }
+function showMsg(msg, type="info"){ const el=document.getElementById("alert-msg"); el.className=`alert alert-${type}`; el.textContent=msg; el.style.display="block"; if(type!=="err") setTimeout(()=>el.style.display="none", 4000); }
 
 // ── FETCH ─────────────────────────────────────────────────────────────────────
 async function fetchData(){
   document.getElementById("loading").style.display="block";
   document.getElementById("products-list").innerHTML="";
   document.getElementById("alert-err").style.display="none";
-  try {
-    // Direct fetch — no CORS issue since this page is served from GitHub Pages (same origin area) or user's browser
-    const headers = {"Cache-Control":"no-cache"};
-    const pat = getPat();
-    if(pat) headers["Authorization"] = `Bearer ${pat}`;
-    const res = await fetch(RAW_URL + "?t=" + Date.now(), {headers});
+  try{
+    const res=await fetch(RAW_URL+"?t="+Date.now());
     if(!res.ok) throw new Error(`HTTP ${res.status}`);
-    appData = await res.json();
-    // Get SHA for saves
+    appData=await res.json();
+    const pat=getPat();
     if(pat){
-      try{
-        const r=await fetch(API_URL,{headers:{Authorization:`Bearer ${pat}`,"Accept":"application/vnd.github+json"}});
-        if(r.ok){const j=await r.json();currentSha=j.sha;}
-      }catch{}
+      try{ const r=await fetch(API_URL,{headers:{Authorization:`Bearer ${pat}`,"Accept":"application/vnd.github+json"}}); if(r.ok){const j=await r.json();currentSha=j.sha;} }catch{}
     }
     render();
-  } catch(e){
+  }catch(e){
     document.getElementById("loading").style.display="none";
-    const el=document.getElementById("alert-err");
-    el.textContent=`⚠ ${e.message}`;
-    el.style.display="block";
+    const el=document.getElementById("alert-err"); el.textContent=`⚠ ${e.message}`; el.style.display="block";
+  }
+}
+
+// ── TRIGGER SCRAPE ────────────────────────────────────────────────────────────
+async function triggerScrape(){
+  const pat=getPat();
+  if(!pat){ alert("Set your GitHub PAT first to trigger scrapes"); togglePat(); return; }
+  const btn=document.getElementById("scrapeBtn");
+  btn.disabled=true;
+  btn.innerHTML='<span class="scrape-spinner"></span>TRIGGERING...';
+  try{
+    const res=await fetch(WORKFLOW_URL,{
+      method:"POST",
+      headers:{Authorization:`Bearer ${pat}`,"Accept":"application/vnd.github+json","Content-Type":"application/json"},
+      body:JSON.stringify({ref:"main"})
+    });
+    if(res.status===204){
+      showMsg("✅ Scrape triggered! Check back in ~5 mins for updated prices.","success");
+      btn.innerHTML="✅ TRIGGERED!";
+      setTimeout(()=>{ btn.disabled=false; btn.innerHTML="⚡ SCRAPE NOW"; },10000);
+    } else {
+      throw new Error(`GitHub returned ${res.status}`);
+    }
+  }catch(e){
+    showMsg(`❌ Failed to trigger: ${e.message}`,"err");
+    btn.disabled=false; btn.innerHTML="⚡ SCRAPE NOW";
   }
 }
 
 // ── SAVE ──────────────────────────────────────────────────────────────────────
 async function saveData(){
   const pat=getPat();
-  if(!pat){ alert("Please set your GitHub PAT first"); togglePat(); return; }
-  document.getElementById("alert-saving").style.display="block";
+  if(!pat){ alert("Set your GitHub PAT first"); togglePat(); return; }
+  showMsg("⏳ Saving to GitHub...","info");
   try{
     const r=await fetch(API_URL,{headers:{Authorization:`Bearer ${pat}`,"Accept":"application/vnd.github+json"}});
-    if(!r.ok) throw new Error(`Cannot read file: ${r.status}`);
+    if(!r.ok) throw new Error(`Cannot read: ${r.status}`);
     const j=await r.json(); currentSha=j.sha;
     const content=btoa(unescape(encodeURIComponent(JSON.stringify(appData,null,2))));
     const res=await fetch(API_URL,{method:"PUT",headers:{Authorization:`Bearer ${pat}`,"Content-Type":"application/json"},body:JSON.stringify({message:"chore: update product list from tracker UI",content,sha:currentSha})});
     if(!res.ok) throw new Error(`Save failed: ${res.status}`);
     const saved=await res.json(); currentSha=saved.content.sha;
-    document.getElementById("alert-saving").style.display="none";
-  }catch(e){
-    document.getElementById("alert-saving").style.display="none";
-    alert(`Error saving: ${e.message}`);
-  }
+    showMsg("✅ Saved! Trigger a scrape to fetch prices.","success");
+  }catch(e){ showMsg(`❌ ${e.message}`,"err"); }
 }
 
 // ── RENDER ────────────────────────────────────────────────────────────────────
@@ -278,35 +285,35 @@ function render(){
   const products=appData?.products||[];
   const pat=getPat();
 
-  // Summary
+  // Total scrapes across all products/sites
+  const totalScrapes=products.reduce((a,p)=>a+Object.values(p.site_data||{}).reduce((b,s)=>b+(s?.scrape_count||0),0),0);
   const drops=products.filter(p=>Object.values(p.site_data||{}).some(d=>d?.price&&d?.was&&d.price<d.was)).length;
   const deals=products.filter(p=>p.rfd_deal?.found);
   const sites=[...new Set(products.flatMap(p=>p.sites_to_track||[]))].length;
+
   document.getElementById("s-products").textContent=products.length;
   document.getElementById("s-drops").textContent=drops;
   document.getElementById("s-deals").textContent=deals.length>0?`${deals.length} 🔥`:"0";
   document.getElementById("s-deals").style.color=deals.length>0?"#854d0e":"#1a1a2e";
+  document.getElementById("s-total-scrapes").textContent=totalScrapes.toLocaleString();
   document.getElementById("s-sites").textContent=sites;
   document.getElementById("s-updated").textContent=appData?.last_updated?`Updated ${timeAgo(appData.last_updated)}`:"Never updated";
 
-  // PAT warning
   document.getElementById("alert-pat").style.display=pat?"none":"block";
   document.getElementById("add-btn").style.display=pat?"block":"none";
-  if(pat){ document.getElementById("patBtn").textContent="🔒 PAT SET"; document.getElementById("patBtn").classList.add("active"); }
+  updatePatBtn();
 
-  // Deal alerts
   if(deals.length>0){
     document.getElementById("deals-box").style.display="block";
     document.getElementById("deals-list").innerHTML=deals.map(p=>`
       <div class="deal-row">
-        <span style="font-size:12px;font-weight:600;color:#1a1a2e;">${p.name}</span>
+        <span style="font-weight:600;font-size:12px;">${p.name}</span>
         <span style="font-size:11px;color:#854d0e;">— ${p.rfd_deal.title}</span>
         <a href="${p.rfd_deal.url}" target="_blank" style="margin-left:auto;font-size:10px;color:#6366f1;text-decoration:none;">View on RFD →</a>
       </div>`).join("");
-  }
+  } else { document.getElementById("deals-box").style.display="none"; }
 
-  // Empty state
-  if(products.length===0){
+  if(products.length===0&&document.getElementById("add-form").style.display==="none"){
     document.getElementById("products-list").innerHTML=`
       <div class="empty-state">
         <div style="font-size:32px;margin-bottom:12px;">📋</div>
@@ -314,53 +321,60 @@ function render(){
         <div style="font-size:11px;color:#9ca3af;margin-bottom:20px;">Add a product to start tracking prices</div>
         ${pat?`<button class="btn-primary" onclick="showAddForm()">+ ADD FIRST PRODUCT</button>`:""}
       </div>`;
-    renderStats();
-    return;
+    renderStats(); return;
   }
 
-  // Products
-  document.getElementById("products-list").innerHTML=products.map((p,idx)=>{
-    const best=getBestSite(p.site_data||{});
-    const bestPrice=best?p.site_data[best]?.price:null;
-    const sitesList=p.sites_to_track||SITES;
-    const colCount=sitesList.length;
+  document.getElementById("products-list").innerHTML=products.map(product=>{
+    const best=getBestSite(product.site_data||{});
+    const bestPrice=best?product.site_data[best]?.price:null;
+    const sitesList=product.sites_to_track||[];
+    const paused=product.paused||false;
+    // Per-product total scrape count
+    const productScrapes=Object.values(product.site_data||{}).reduce((a,s)=>a+(s?.scrape_count||0),0);
+
     return `
-    <div class="product-card${p.rfd_deal?.found?" deal":""}" id="card-${p.id}">
-      ${p.rfd_deal?.found?`<div class="deal-banner">🔥 DEAL ON RFD · $${p.rfd_deal.price?.toFixed(2)} <a href="${p.rfd_deal.url}" target="_blank" style="margin-left:auto;color:#6366f1;text-decoration:none;">View →</a></div>`:""}
-      <div class="product-header" onclick="toggleExpand('${p.id}')">
-        <div style="flex:1;">
+    <div class="product-card${product.rfd_deal?.found?" deal":""}${paused?" paused":""}" id="card-${product.id}">
+      ${product.rfd_deal?.found?`<div class="deal-banner">🔥 DEAL ON RFD · $${product.rfd_deal.price?.toFixed(2)} <a href="${product.rfd_deal.url}" target="_blank" style="margin-left:auto;color:#6366f1;text-decoration:none;">View →</a></div>`:""}
+      ${paused?`<div class="paused-banner">⏸ Tracking paused — scraper will skip this product</div>`:""}
+      <div class="product-header" onclick="toggleExpand('${product.id}')">
+        <div style="flex:1;min-width:0;">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;flex-wrap:wrap;">
-            <span class="product-name">${p.name}</span>
-            <span class="category-badge">${p.category||""}</span>
+            <span class="product-name">${product.name}</span>
+            <span class="category-badge">${product.category||""}</span>
+            <span class="scrape-count" title="Total scrapes for this product">🔄 ${productScrapes} scrape${productScrapes!==1?"s":""}</span>
           </div>
-          ${best?`<div style="font-size:10px;color:#6b7280;">Best at <span style="color:${SITE_META[best].color};font-weight:600;">${SITE_META[best].label}</span></div>`:`<div style="font-size:10px;color:#d1d5db;">Awaiting first scrape...</div>`}
+          ${best?`<div style="font-size:10px;color:#6b7280;">Best at <span style="color:${SITE_META[best]?.color};font-weight:600;">${SITE_META[best]?.label}</span></div>`:`<div style="font-size:10px;color:#d1d5db;">Awaiting first scrape...</div>`}
         </div>
-        <div style="display:flex;align-items:center;gap:10px;">
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
           ${bestPrice?`<div class="best-price">$${bestPrice.toFixed(2)}</div>`:""}
-          ${pat?`<button class="btn-danger" onclick="removeProduct(event,'${p.id}')">✕</button>`:""}
-          <span class="chevron" id="chev-${p.id}">⌄</span>
+          ${pat?`
+            <button class="btn-pause${paused?" paused":""}" title="${paused?"Resume tracking":"Pause tracking"}" onclick="togglePause(event,'${product.id}')">${paused?"▶":"⏸"}</button>
+            <button class="btn-danger" title="Remove product" onclick="removeProduct(event,'${product.id}')">✕</button>
+          `:""}
+          <span class="chevron" id="chev-${product.id}">⌄</span>
         </div>
       </div>
-      <div class="sites-grid" style="grid-template-columns:repeat(${colCount},1fr);">
+      <div class="sites-grid" style="grid-template-columns:repeat(${sitesList.length||1},1fr);">
         ${sitesList.map(site=>{
-          const d=p.site_data?.[site]||{};
+          const d=product.site_data?.[site]||{};
           const isBest=site===best;
-          return `<div class="site-cell${isBest?" best":""}" style="--site-color:${SITE_META[site].color};">
-            <div class="site-label" style="color:${SITE_META[site].color};">${SITE_META[site].label.toUpperCase()}</div>
+          const sc=d.scrape_count||0;
+          return `<div class="site-cell${isBest?" best":""}" style="--site-color:${SITE_META[site]?.color||'#666'};">
+            <div class="site-label" style="color:${SITE_META[site]?.color||'#666'};">${SITE_META[site]?.label?.toUpperCase()||site.toUpperCase()}</div>
             ${d.price?`
               <div class="site-price${isBest?" best-p":""}">$${d.price.toFixed(2)}</div>
               ${d.was&&d.price<d.was?`<div class="site-was">$${d.was.toFixed(2)}</div>`:""}
               <div class="site-stock ${d.in_stock?"in-stock":"out-stock"}">${d.in_stock?"● In stock":"○ Out of stock"}</div>
               ${d.url?`<a href="${d.url}" target="_blank" class="site-link">View →</a>`:""}
-              <div class="site-age">${timeAgo(d.last_checked)}</div>
-            `:d.error?`<div style="font-size:10px;color:#ef4444;">Error</div>`:`<div style="font-size:10px;color:#d1d5db;">Pending...</div>`}
+              <div class="site-age">${timeAgo(d.last_checked)} · ${sc} scrape${sc!==1?"s":""}</div>
+            `:d.error?`<div style="font-size:10px;color:#ef4444;">Error</div><div style="font-size:8px;color:#d1d5db;">${sc} attempt${sc!==1?"s":""}</div>`:`<div style="font-size:10px;color:#d1d5db;">Pending...</div>`}
           </div>`;
         }).join("")}
       </div>
-      <div class="chart-wrap" id="chart-${p.id}">
+      <div class="chart-wrap" id="chart-${product.id}">
         <div style="font-size:9px;color:#9ca3af;letter-spacing:0.15em;margin-bottom:10px;">PRICE HISTORY</div>
-        <div class="chart-legend" id="legend-${p.id}"></div>
-        <canvas id="canvas-${p.id}" height="140"></canvas>
+        <div class="chart-legend" id="legend-${product.id}"></div>
+        <canvas id="canvas-${product.id}" height="140"></canvas>
       </div>
     </div>`;
   }).join("");
@@ -374,44 +388,57 @@ function toggleExpand(id){
   const isOpen=wrap.classList.contains("open");
   if(isOpen){ wrap.classList.remove("open"); chev.classList.remove("open"); return; }
   wrap.classList.add("open"); chev.classList.add("open");
-  // Render chart
   const product=(appData?.products||[]).find(p=>p.id===id);
   if(!product) return;
-  const sites=product.sites_to_track||SITES;
+  const sites=product.sites_to_track||[];
   const dates=new Set();
   sites.forEach(s=>product.site_data?.[s]?.history?.forEach(h=>dates.add(h.d)));
   const labels=[...dates].sort();
-  if(!labels.length) return;
+  if(!labels.length){ document.getElementById(`chart-${id}`).innerHTML+='<div style="font-size:11px;color:#d1d5db;text-align:center;padding:16px;">No price history yet</div>'; return; }
   const datasets=sites.map((s,i)=>({
-    label:SITE_META[s].label,
+    label:SITE_META[s]?.label||s,
     data:labels.map(d=>product.site_data?.[s]?.history?.find(h=>h.d===d)?.p||null),
     borderColor:CHART_COLORS[i],backgroundColor:CHART_COLORS[i]+"22",
     borderWidth:2,pointRadius:3,tension:0,spanGaps:true,stepped:"before"
   })).filter(ds=>ds.data.some(v=>v!==null));
-  // Legend
   document.getElementById(`legend-${id}`).innerHTML=datasets.map(ds=>`<span style="font-size:10px;color:#6b7280;"><span class="legend-dot" style="background:${ds.borderColor};"></span>${ds.label}</span>`).join("");
   if(charts[id]) charts[id].destroy();
-  const ctx=document.getElementById(`canvas-${id}`).getContext("2d");
+  const ctx=document.getElementById(`canvas-${id}`)?.getContext("2d");
+  if(!ctx) return;
   charts[id]=new Chart(ctx,{type:"line",data:{labels,datasets},options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.dataset.label}: $${c.parsed.y?.toFixed(2)}`}}},scales:{x:{grid:{display:false},ticks:{font:{family:"DM Mono",size:9},color:"#9ca3af"}},y:{grid:{color:"#f3f4f6"},ticks:{font:{family:"DM Mono",size:9},color:"#9ca3af",callback:v=>`$${v}`}}}}});
 }
 
-// ── ADD PRODUCT ───────────────────────────────────────────────────────────────
-let selectedSites={costco:true,amazon:true,walmart:true,bestbuy:false};
+// ── PAUSE / RESUME ────────────────────────────────────────────────────────────
+async function togglePause(e, id){
+  e.stopPropagation();
+  const product=(appData?.products||[]).find(p=>p.id===id);
+  if(!product) return;
+  product.paused=!product.paused;
+  render();
+  await saveData();
+}
 
+// ── REMOVE ────────────────────────────────────────────────────────────────────
+async function removeProduct(e, id){
+  e.stopPropagation();
+  if(!confirm("Remove this product?")) return;
+  appData.products=appData.products.filter(p=>p.id!==id);
+  render();
+  await saveData();
+}
+
+// ── ADD PRODUCT ───────────────────────────────────────────────────────────────
 function showAddForm(){
   document.getElementById("add-btn").style.display="none";
   document.getElementById("add-form").style.display="block";
-  selectedSites={costco:true,amazon:true,walmart:true,bestbuy:false};
+  SITES.forEach(s=>siteUrls[s]="");
   renderForm();
 }
 
-let siteUrls = {costco:"",amazon:"",walmart:"",bestbuy:""};
-
 function renderForm(){
   const name=document.getElementById("pname")?.value||"";
-  // Preserve existing url inputs
   SITES.forEach(s=>{ const el=document.getElementById(`url-${s}`); if(el) siteUrls[s]=el.value; });
-  const anyUrl = Object.values(siteUrls).some(v=>v.trim());
+  const anyUrl=Object.values(siteUrls).some(v=>v.trim());
   document.getElementById("add-form").innerHTML=`
     <div class="form-card">
       <div class="form-title">Add New Product</div>
@@ -419,7 +446,7 @@ function renderForm(){
       <div class="form-grid">
         <div>
           <label>PRODUCT NAME *</label>
-          <input id="pname" placeholder="e.g. Apple Watch Series 10 42mm" value="${name}" oninput="renderForm()"/>
+          <input id="pname" placeholder="e.g. Apple AirPods 4" value="${name}" oninput="renderForm()"/>
         </div>
         <div>
           <label>CATEGORY</label>
@@ -430,59 +457,44 @@ function renderForm(){
       <div style="display:grid;gap:10px;margin-bottom:20px;">
         ${SITES.map(site=>`
           <div style="display:flex;align-items:center;gap:10px;">
-            <div style="width:80px;flex-shrink:0;">
-              <span style="font-size:16px;">${SITE_META[site].icon}</span>
-              <span style="font-size:10px;color:${SITE_META[site].color};font-weight:600;margin-left:4px;">${SITE_META[site].label}</span>
+            <div style="width:90px;flex-shrink:0;display:flex;align-items:center;gap:4px;">
+              <span style="font-size:15px;">${SITE_META[site].icon}</span>
+              <span style="font-size:10px;color:${SITE_META[site].color};font-weight:600;">${SITE_META[site].label}</span>
             </div>
-            <input id="url-${site}" value="${siteUrls[site]||""}" placeholder="https://www.${site==="bestbuy"?"bestbuy":site}.ca/... (optional)" oninput="renderForm()" style="flex:1;font-size:11px;"/>
+            <input id="url-${site}" value="${siteUrls[site]||""}" placeholder="https://... (optional)" oninput="renderForm()" style="flex:1;font-size:11px;"/>
           </div>`).join("")}
       </div>
       <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:10px;color:#15803d;">
-        💡 Go to each site, search for your product, open the product page, copy the URL and paste it above. Only fill in the sites you want to track.
+        💡 Go to each retailer, find your product, copy the URL and paste above. Only fill in sites you want to track.
       </div>
       <div class="form-actions">
         <button class="btn-primary" ${!name||!anyUrl?"disabled":""} onclick="addProduct()">+ ADD PRODUCT</button>
         <button class="btn-secondary" onclick="cancelAdd()">CANCEL</button>
-        ${!anyUrl?"<span style='font-size:10px;color:#ef4444;'>Paste at least one URL</span>":""}
+        ${!anyUrl&&name?`<span style="font-size:10px;color:#ef4444;">Paste at least one URL</span>`:""}
       </div>
     </div>`;
-  // Restore url values
   SITES.forEach(s=>{ const el=document.getElementById(`url-${s}`); if(el) el.value=siteUrls[s]||""; });
 }
-
-function toggleSite(site){ selectedSites[site]=!selectedSites[site]; renderForm(); }
 
 function cancelAdd(){
   document.getElementById("add-form").style.display="none";
   document.getElementById("add-form").innerHTML="";
   document.getElementById("add-btn").style.display="block";
-  siteUrls={costco:"",amazon:"",walmart:"",bestbuy:""};
+  SITES.forEach(s=>siteUrls[s]="");
 }
 
 async function addProduct(){
   const name=document.getElementById("pname").value.trim();
   const cat=document.getElementById("pcat").value;
-  // Read URLs from inputs
   SITES.forEach(s=>{ const el=document.getElementById(`url-${s}`); if(el) siteUrls[s]=el.value.trim(); });
   const activeSites=SITES.filter(s=>siteUrls[s]);
   if(!name||!activeSites.length) return;
-  // Build site_data with URLs pre-filled
   const site_data={};
-  activeSites.forEach(s=>{ let u=siteUrls[s]; if(u&&!u.startsWith('http')) u='https://'+u; site_data[s]={url:u,price:null,was:null,in_stock:null,history:[],last_checked:null,error:null}; });
-  const product={id:Date.now().toString(),name,category:cat,sites_to_track:activeSites,site_data,rfd_deal:null,added_at:new Date().toISOString()};
+  activeSites.forEach(s=>{ let u=siteUrls[s]; if(u&&!u.startsWith("http")) u="https://"+u; site_data[s]={url:u,price:null,was:null,in_stock:null,history:[],last_checked:null,error:null,scrape_count:0}; });
+  const product={id:Date.now().toString(),name,category:cat,sites_to_track:activeSites,site_data,rfd_deal:null,paused:false,added_at:new Date().toISOString()};
   if(!appData) appData={last_updated:null,products:[]};
   appData.products.push(product);
-  cancelAdd();
-  render();
-  await saveData();
-}
-
-async function removeProduct(e,id){
-  e.stopPropagation();
-  if(!confirm("Remove this product?")) return;
-  appData.products=appData.products.filter(p=>p.id!==id);
-  render();
-  await saveData();
+  cancelAdd(); render(); await saveData();
 }
 
 // ── STATS ─────────────────────────────────────────────────────────────────────
@@ -494,52 +506,61 @@ function renderStats(){
   const ghPct=Math.min(Math.round(minsPerMonth/2000*100),100);
   const proxPct=Math.min(Math.round(mbPerMonth/1024*100),100);
   const costPerMonth=(mbPerMonth/1024).toFixed(2);
+  const totalScrapes=products.reduce((a,p)=>a+Object.values(p.site_data||{}).reduce((b,s)=>b+(s?.scrape_count||0),0),0);
 
   document.getElementById("gh-stats").innerHTML=[
-    {l:"EST. MINS/MONTH",v:minsPerMonth,s:`of 2,000 free`,c:ghPct>75?"#ef4444":"#6366f1"},
+    {l:"EST. MINS/MONTH",v:minsPerMonth,s:"of 2,000 free",c:ghPct>75?"#ef4444":"#6366f1"},
     {l:"SCRAPES/DAY",v:3,s:"every 8 hours",c:"#0ea5e9"},
     {l:"RFD CHECKS/DAY",v:6,s:"every 4 hours",c:"#f59e0b"},
-    {l:"PRODUCTS",v:products.length,s:`${totalSlots} site slots`,c:"#1a1a2e"},
+    {l:"TOTAL SCRAPES",v:totalScrapes,s:"all time",c:"#a78bfa"},
   ].map(s=>`<div><div style="font-size:9px;color:#9ca3af;letter-spacing:0.12em;margin-bottom:4px;">${s.l}</div><div style="font-size:22px;color:${s.c};font-weight:600;">${s.v}</div><div style="font-size:10px;color:#9ca3af;">${s.s}</div></div>`).join("");
 
   document.getElementById("gh-gauge").innerHTML=`
     <div class="gauge-wrap">
-      <div class="gauge-header"><span style="color:#6b7280;">${ghPct}% of free tier (estimated)</span><span style="font-weight:600;color:${ghPct>75?"#ef4444":"#1a1a2e"}">${2000-minsPerMonth} mins remaining</span></div>
+      <div class="gauge-header"><span style="color:#6b7280;">${ghPct}% of free tier</span><span style="font-weight:600;color:${ghPct>75?"#ef4444":"#1a1a2e"}">${2000-minsPerMonth} mins remaining</span></div>
       <div class="gauge-track"><div class="gauge-fill" style="width:${ghPct}%;background:${ghPct>75?"#ef4444":"#6366f1"};"></div></div>
     </div>`;
 
   document.getElementById("proxy-stats").innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+      <div><div style="font-size:9px;color:#9ca3af;letter-spacing:0.12em;margin-bottom:4px;">EST. DATA/MONTH</div><div style="font-size:20px;color:#1a1a2e;font-weight:600;">${mbPerMonth}MB</div><div style="font-size:10px;color:#9ca3af;">of 1,024MB</div></div>
+      <div><div style="font-size:9px;color:#9ca3af;letter-spacing:0.12em;margin-bottom:4px;">EST. COST/MONTH</div><div style="font-size:20px;color:#15803d;font-weight:600;">$${costPerMonth}</div><div style="font-size:10px;color:#9ca3af;">at $1/GB</div></div>
+    </div>
     <div class="gauge-wrap">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
-        <div><div style="font-size:9px;color:#9ca3af;letter-spacing:0.12em;margin-bottom:4px;">EST. DATA/MONTH</div><div style="font-size:20px;color:#1a1a2e;font-weight:600;">${mbPerMonth}MB</div><div style="font-size:10px;color:#9ca3af;">of 1,024MB</div></div>
-        <div><div style="font-size:9px;color:#9ca3af;letter-spacing:0.12em;margin-bottom:4px;">EST. COST/MONTH</div><div style="font-size:20px;color:#15803d;font-weight:600;">$${costPerMonth}</div><div style="font-size:10px;color:#9ca3af;">at $1/GB</div></div>
-      </div>
-      <div class="gauge-header"><span style="color:#6b7280;">${proxPct}% of 1GB</span><span style="font-weight:600;color:#1a1a2e;">${(1024-mbPerMonth).toFixed(0)}MB left</span></div>
+      <div class="gauge-header"><span style="color:#6b7280;">${proxPct}% of 1GB</span><span style="font-weight:600;">${(1024-mbPerMonth).toFixed(0)}MB left</span></div>
       <div class="gauge-track"><div class="gauge-fill" style="width:${proxPct}%;background:#10b981;"></div></div>
     </div>
-    <div style="background:#f0fdf4;padding:10px 12px;border-radius:6px;font-size:10px;color:#15803d;">💰 $5 top-up lasts ~${Math.round(5/Math.max(costPerMonth,0.01))} months at current usage</div>`;
+    <div style="background:#f0fdf4;padding:10px 12px;border-radius:6px;font-size:10px;color:#15803d;margin-top:8px;">💰 $5 top-up lasts ~${Math.round(5/Math.max(costPerMonth,0.01))} months</div>`;
 
   document.getElementById("product-breakdown").innerHTML=products.length===0
     ?`<div style="font-size:11px;color:#d1d5db;text-align:center;padding:24px 0;">No products added yet</div>`
-    :products.map(p=>`
-      <div style="margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid #f3f4f6;">
-        <div style="font-size:11px;color:#1a1a2e;font-weight:600;margin-bottom:4px;">${p.name}</div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap;">
-          ${(p.sites_to_track||[]).map(s=>`<span style="font-size:9px;color:${SITE_META[s].color};background:${SITE_META[s].color}18;padding:2px 7px;border-radius:20px;">${SITE_META[s].label}</span>`).join("")}
+    :products.map(p=>{
+      const ps=Object.values(p.site_data||{}).reduce((a,s)=>a+(s?.scrape_count||0),0);
+      return `<div style="margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid #f3f4f6;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <span style="font-size:11px;color:#1a1a2e;font-weight:600;">${p.name}</span>
+          <span style="font-size:10px;color:#6366f1;font-weight:600;">${ps} scrape${ps!==1?"s":""}</span>
         </div>
-      </div>`).join("");
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px;">
+          ${(p.sites_to_track||[]).map(s=>{
+            const sc=p.site_data?.[s]?.scrape_count||0;
+            return `<span style="font-size:9px;color:${SITE_META[s]?.color};background:${SITE_META[s]?.color}18;padding:2px 7px;border-radius:20px;">${SITE_META[s]?.label} · ${sc}</span>`;
+          }).join("")}
+        </div>
+        ${p.paused?`<span style="font-size:9px;color:#6b7280;">⏸ Paused</span>`:""}
+      </div>`;
+    }).join("");
 }
 
-// ── TABS ──────────────────────────────────────────────────────────────────────
 function switchTab(t){
   ["prices","stats"].forEach(id=>{
     document.getElementById(`page-${id}`).style.display=id===t?"block":"none";
     document.getElementById(`tab-${id}`).classList.toggle("active",id===t);
   });
+  if(t==="stats") renderStats();
 }
 
-// ── INIT ──────────────────────────────────────────────────────────────────────
-if(getPat()){ document.getElementById("patBtn").textContent="🔒 PAT SET"; document.getElementById("patBtn").classList.add("active"); }
+updatePatBtn();
 fetchData();
 </script>
 </body>
