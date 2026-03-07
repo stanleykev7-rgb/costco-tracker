@@ -1,5 +1,6 @@
 import json
 import asyncio
+import random
 from datetime import datetime, timezone
 from playwright.async_api import async_playwright
 
@@ -18,14 +19,33 @@ PRODUCTS = [
     }
 ]
 
+USER_AGENTS = [
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0",
+]
+
 async def scrape_product(page, product):
     print(f"Scraping: {product['name']}")
     try:
-        await page.goto(product["url"], timeout=30000, wait_until="domcontentloaded")
-        await page.wait_for_timeout(3000)
+        # Visit homepage first to get cookies (mimics real user)
+        print("  → Visiting homepage first...")
+        await page.goto("https://www.costco.ca", timeout=40000, wait_until="domcontentloaded")
+        await page.wait_for_timeout(random.randint(2000, 4000))
 
-        # Try multiple price selectors Costco uses
+        # Now visit product page
+        print(f"  → Navigating to product...")
+        await page.goto(product["url"], timeout=40000, wait_until="domcontentloaded")
+        await page.wait_for_timeout(random.randint(3000, 5000))
+
+        # Simulate human scroll
+        await page.evaluate("window.scrollBy(0, 400)")
+        await page.wait_for_timeout(1000)
+
         price = None
+        import re
+
+        # Try multiple price selectors
         selectors = [
             ".your-price .value",
             "[automation-id='itemPrice']",
@@ -33,36 +53,43 @@ async def scrape_product(page, product):
             ".product-price",
             'span[itemprop="price"]',
             ".costcoPrice",
-            "[class*='price']"
+            ".product-price-container",
+            "[class*='your-price']",
+            "[class*='Price']",
         ]
 
         for sel in selectors:
             try:
                 el = page.locator(sel).first
                 if await el.count() > 0:
-                    text = await el.inner_text()
-                    text = text.strip()
-                    if "$" in text or any(c.isdigit() for c in text):
-                        price = text
+                    text = (await el.inner_text()).strip()
+                    if "$" in text or re.search(r'\d+\.\d{2}', text):
+                        price = text.split("\n")[0].strip()
+                        print(f"  → Found price via selector '{sel}': {price}")
                         break
             except:
                 continue
 
-        # Fallback: search full page text for price pattern
+        # Fallback: scan full page HTML for price patterns
         if not price:
             content = await page.content()
-            import re
-            match = re.search(r'\$\s*(\d+\.\d{2})', content)
-            if match:
-                price = f"${match.group(1)}"
+            # Look for JSON-LD structured data first (most reliable)
+            json_match = re.search(r'"price"\s*:\s*"?(\d+\.?\d*)"?', content)
+            if json_match:
+                price = f"${json_match.group(1)}"
+                print(f"  → Found price via JSON-LD: {price}")
+            else:
+                # Last resort: regex on page content
+                match = re.search(r'\$\s*(\d{2,3}\.\d{2})', content)
+                if match:
+                    price = f"${match.group(1)}"
+                    print(f"  → Found price via regex: {price}")
 
-        in_stock = True
-        try:
-            content = await page.content()
-            if "out of stock" in content.lower() or "sold out" in content.lower():
-                in_stock = False
-        except:
-            pass
+        # Check stock status
+        content = await page.content()
+        in_stock = not any(phrase in content.lower() for phrase in [
+            "out of stock", "sold out", "unavailable", "not available"
+        ])
 
         return {
             **product,
@@ -73,6 +100,7 @@ async def scrape_product(page, product):
         }
 
     except Exception as e:
+        print(f"  ❌ Error: {e}")
         return {
             **product,
             "price": "Error",
@@ -84,23 +112,54 @@ async def scrape_product(page, product):
 async def main():
     results = []
     async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=True)
-        context = await browser.new_context(
-            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
-            viewport={"width": 1280, "height": 800},
-            locale="en-CA",
-            extra_http_headers={
-                "Accept-Language": "en-CA,en;q=0.9",
-                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
-            }
+        browser = await p.chromium.launch(
+            headless=True,
+            args=[
+                "--disable-blink-features=AutomationControlled",
+                "--no-sandbox",
+                "--disable-setuid-sandbox",
+                "--disable-dev-shm-usage",
+                "--disable-http2",           # Force HTTP/1.1 — fixes ERR_HTTP2_PROTOCOL_ERROR
+                "--disable-web-security",
+                "--lang=en-CA",
+            ]
         )
-        page = await context.new_page()
 
         for product in PRODUCTS:
+            # Fresh context per product (new cookies, new fingerprint)
+            context = await browser.new_context(
+                user_agent=random.choice(USER_AGENTS),
+                viewport={"width": random.randint(1280, 1920), "height": random.randint(768, 1080)},
+                locale="en-CA",
+                timezone_id="America/Toronto",
+                extra_http_headers={
+                    "Accept-Language": "en-CA,en;q=0.9",
+                    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+                    "Accept-Encoding": "gzip, deflate, br",
+                    "Cache-Control": "no-cache",
+                    "Pragma": "no-cache",
+                    "Sec-Fetch-Dest": "document",
+                    "Sec-Fetch-Mode": "navigate",
+                    "Sec-Fetch-Site": "none",
+                    "Upgrade-Insecure-Requests": "1",
+                }
+            )
+
+            # Hide webdriver fingerprint
+            page = await context.new_page()
+            await page.add_init_script("""
+                Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
+                Object.defineProperty(navigator, 'plugins', { get: () => [1, 2, 3] });
+                Object.defineProperty(navigator, 'languages', { get: () => ['en-CA', 'en'] });
+                window.chrome = { runtime: {} };
+            """)
+
             result = await scrape_product(page, product)
             results.append(result)
-            print(f"  → {result['name']}: {result['price']}")
-            await page.wait_for_timeout(2000)
+            print(f"  ✅ {result['name']}: {result['price']}")
+
+            await context.close()
+            await asyncio.sleep(random.randint(3, 6))  # Delay between products
 
         await browser.close()
 
