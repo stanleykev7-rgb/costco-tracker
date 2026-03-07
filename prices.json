@@ -21,6 +21,27 @@
       },
       "rfd_deal": null,
       "added_at": "2026-03-07T13:22:56.494Z"
+    },
+    {
+      "id": "1772890156955",
+      "name": "Kirkland Signature Whey Protein Powder, Vanilla, 2.45 kg",
+      "category": "Protein",
+      "sites_to_track": [
+        "costco"
+      ],
+      "site_data": {
+        "costco": {
+          "url": "https://www.costco.ca/kirkland-signature-whey-protein-powder-vanilla-245-kg.product.4000374588.html",
+          "price": null,
+          "was": null,
+          "in_stock": null,
+          "history": [],
+          "last_checked": null,
+          "error": null
+        }
+      },
+      "rfd_deal": null,
+      "added_at": "2026-03-07T13:29:16.955Z"
     }
   ]
 }
