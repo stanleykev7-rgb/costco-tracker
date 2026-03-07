@@ -1,31 +1,4 @@
 {
   "last_updated": "2026-03-07T17:05:36.697021+00:00",
-  "products": [
-    {
-      "id": "1772902670084",
-      "name": "Logitech MX Master 4",
-      "category": "Protein",
-      "sites_to_track": [
-        "amazon"
-      ],
-      "site_data": {
-        "amazon": {
-          "url": "https://www.amazon.ca/Logitech-Ergonomic-Performance-Ultra-Fast-Scrolling/dp/B0FC5SJNQX/ref=lp_206837354011_1_4?pf_rd_p=bdb9c561-5fbc-41bd-9c6c-a048ad366969&pf_rd_r=9MM9VNBHQN3B04DYJKHC&sbo=RZvfv%2F%2FHxDF%2BO5021pAnSA%3D%3D&th=1",
-          "price": 159.99,
-          "was": null,
-          "in_stock": false,
-          "history": [
-            {
-              "d": "Mar 7",
-              "p": 159.99
-            }
-          ],
-          "last_checked": "2026-03-07T17:05:17.383353+00:00",
-          "error": null
-        }
-      },
-      "rfd_deal": null,
-      "added_at": "2026-03-07T16:57:50.084Z"
-    }
-  ]
+  "products": []
 }
