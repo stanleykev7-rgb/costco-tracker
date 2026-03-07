@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-03-07T11:21:57.344870+00:00",
+  "last_updated": "2026-03-07T11:43:37.647419+00:00",
   "products": [
     {
       "id": "1772882181810",
@@ -15,7 +15,7 @@
           "was": null,
           "in_stock": null,
           "history": [],
-          "last_checked": "2026-03-07T11:21:48.771241+00:00",
+          "last_checked": "2026-03-07T11:43:01.175739+00:00",
           "error": "Price not found"
         }
       },
@@ -29,7 +29,17 @@
       "sites_to_track": [
         "costco"
       ],
-      "site_data": {},
+      "site_data": {
+        "costco": {
+          "url": null,
+          "price": null,
+          "was": null,
+          "in_stock": null,
+          "history": [],
+          "last_checked": "2026-03-07T11:43:30.444860+00:00",
+          "error": "Price not found"
+        }
+      },
       "rfd_deal": null,
       "added_at": "2026-03-07T11:41:39.981Z"
     }
