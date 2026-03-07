@@ -1,26 +1,4 @@
 {
   "last_updated": "2026-03-07T12:12:38.943001+00:00",
-  "products": [
-    {
-      "id": "1772883699981",
-      "name": "ON Gold Standard",
-      "category": "Protein",
-      "sites_to_track": [
-        "costco"
-      ],
-      "site_data": {
-        "costco": {
-          "url": null,
-          "price": null,
-          "was": null,
-          "in_stock": null,
-          "history": [],
-          "last_checked": "2026-03-07T11:43:30.444860+00:00",
-          "error": "No URL configured"
-        }
-      },
-      "rfd_deal": null,
-      "added_at": "2026-03-07T11:41:39.981Z"
-    }
-  ]
+  "products": []
 }
