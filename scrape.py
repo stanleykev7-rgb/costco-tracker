@@ -317,6 +317,9 @@ async def main():
 
             for site_key, site_info in site_data.items():
                 url = site_info.get("url")
+                if url and not url.startswith("http"):
+                    url = "https://" + url
+                    site_info["url"] = url
                 if not url:
                     print(f"  ⏭️  No URL for {site_key}")
                     continue
