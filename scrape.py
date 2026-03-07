@@ -84,7 +84,7 @@ def extract_price_from_text(text):
 
 # ── COSTCO: Direct API (no browser needed) ───────────────────────────────────
 def scrape_costco_api(url):
-    """Call Costco's internal product API directly — bypasses Akamai entirely."""
+    """Call Costco's internal product API directly."""
     product_id = extract_product_id(url)
     if not product_id:
         print(f"  ❌ Could not extract Costco product ID from URL")
@@ -92,17 +92,38 @@ def scrape_costco_api(url):
 
     print(f"  🔑 Costco API: product ID {product_id}")
 
-    api_url = f"https://www.costco.ca/AjaxGetProductDetailView?productId={product_id}"
-    headers = {
+    # Build proxy dict fresh each call (avoids import-time env var issues)
+    proxies = {}
+    if all([PROXY_HOST, PROXY_PORT, PROXY_USERNAME, PROXY_PASSWORD]):
+        proxy_url = f"http://{PROXY_USERNAME}:{PROXY_PASSWORD}@{PROXY_HOST}:{PROXY_PORT}"
+        proxies = {"http": proxy_url, "https": proxy_url}
+        print(f"  🔒 Using proxy for Costco API")
+    else:
+        print(f"  ⚠️  No proxy for Costco API")
+
+    session = requests.Session()
+    session.headers.update({
         "User-Agent": random.choice(USER_AGENTS),
-        "Accept": "application/json, text/javascript, */*; q=0.01",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
         "Accept-Language": "en-CA,en;q=0.9",
-        "Referer": url,
-        "X-Requested-With": "XMLHttpRequest",
-    }
+        "Accept-Encoding": "gzip, deflate, br",
+        "Referer": "https://www.costco.ca/",
+        "Connection": "keep-alive",
+    })
 
     try:
-        resp = requests.get(api_url, headers=headers, proxies=PROXIES, timeout=20)
+        # First visit the homepage to get cookies
+        print(f"  🍪 Getting Costco session cookies...")
+        session.get("https://www.costco.ca/", proxies=proxies, timeout=20, verify=True)
+
+        # Now call the API with cookies
+        api_url = f"https://www.costco.ca/AjaxGetProductDetailView?productId={product_id}"
+        session.headers.update({
+            "Accept": "application/json, text/javascript, */*; q=0.01",
+            "X-Requested-With": "XMLHttpRequest",
+            "Referer": url,
+        })
+        resp = session.get(api_url, proxies=proxies, timeout=20, verify=True)
         print(f"  📡 API status: {resp.status_code}")
         if resp.status_code != 200:
             raise Exception(f"API returned {resp.status_code}")
