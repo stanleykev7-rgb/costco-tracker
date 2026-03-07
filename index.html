@@ -468,7 +468,7 @@ async function addProduct(){
   if(!name||!activeSites.length) return;
   // Build site_data with URLs pre-filled
   const site_data={};
-  activeSites.forEach(s=>{ site_data[s]={url:siteUrls[s],price:null,was:null,in_stock:null,history:[],last_checked:null,error:null}; });
+  activeSites.forEach(s=>{ let u=siteUrls[s]; if(u&&!u.startsWith('http')) u='https://'+u; site_data[s]={url:u,price:null,was:null,in_stock:null,history:[],last_checked:null,error:null}; });
   const product={id:Date.now().toString(),name,category:cat,sites_to_track:activeSites,site_data,rfd_deal:null,added_at:new Date().toISOString()};
   if(!appData) appData={last_updated:null,products:[]};
   appData.products.push(product);
