@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-03-08T17:19:14.227998+00:00",
+  "last_updated": "2026-03-08T12:26:12.559866+00:00",
   "products": [
     {
       "id": "1772973443707",
@@ -13,18 +13,13 @@
       "site_data": {
         "costco": {
           "url": "https://www.costco.ca/optimum-nutrition-gold-standard-100-whey-protein-extreme-chocolate-shake-256-kg.product.4000077852.html",
-          "price": 99.99,
+          "price": null,
           "was": null,
-          "in_stock": true,
-          "history": [
-            {
-              "d": "Mar 8",
-              "p": 99.99
-            }
-          ],
-          "last_checked": "2026-03-08T17:17:50.371556+00:00",
+          "in_stock": null,
+          "history": [],
+          "last_checked": null,
           "error": null,
-          "scrape_count": 1
+          "scrape_count": 0
         },
         "amazon": {
           "url": "https://amazon.ca/OPTIMUM-NUTRITION-STANDARD-Protein-Chocolate/dp/B000QSTBNS/ref=sr_1_1?crid=3E2Q62LWUAUV2&dib=eyJ2IjoiMSJ9.241gWrgPbxy6cYmdNhTQSIX7aaVfLN7hCcE_8Pqah5hdFt9EIUEyz4wywknuC51QJW2twJJ0E2IITF72yZ7wxAHEstFk7f6aeo_dURiKQSpwT73PNIcjApnh8XDuPavg0XXAUKXZnzvoiU8VUG57BTINJkshsTgd5t2EOGpNGCJ6vtb0CqCzbd6dhbtj6U8CfV95vv0jFDh_xXl3U7AVuXN4K8KP-4SgLED7nftnEKBlk_WywRxnJyJgJJrWSWB8SCaRDJZUXbkuV8YRM9yWba31p2135S0tRanFASnz5MU.nkUO-wHpXCnEmf97sjGC3OML3kPQ5jexgIDscxeqUSo&dib_tag=se&keywords=on+gold+standard&qid=1772973201&sprefix=ON+gol%2Caps%2C389&sr=8-1",
@@ -32,23 +27,23 @@
           "was": null,
           "in_stock": null,
           "history": [],
-          "last_checked": "2026-03-08T17:18:25.112838+00:00",
-          "error": "Price not found",
-          "scrape_count": 1
+          "last_checked": null,
+          "error": null,
+          "scrape_count": 0
         },
         "walmart": {
           "url": "https://www.walmart.ca/en/ip/100-gold-standard-whey-double-rich-chocolate-5lb-unisex/6000201352971?classType=REGULAR&from=/search",
           "price": null,
           "was": null,
-          "in_stock": true,
+          "in_stock": null,
           "history": [],
-          "last_checked": "2026-03-08T17:19:07.835448+00:00",
-          "error": "Price not found",
-          "scrape_count": 1
+          "last_checked": null,
+          "error": null,
+          "scrape_count": 0
         }
       },
       "rfd_deal": null,
-      "paused": false,
+      "paused": true,
       "added_at": "2026-03-08T12:37:23.707Z"
     }
   ]
