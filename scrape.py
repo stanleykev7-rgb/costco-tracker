@@ -17,7 +17,8 @@ PROXIES        = {"http": f"http://{PROXY_USERNAME}:{PROXY_PASSWORD}@{PROXY_HOST
                   "https": f"http://{PROXY_USERNAME}:{PROXY_PASSWORD}@{PROXY_HOST}:{PROXY_PORT}"} if USE_PROXY else {}
 
 PRICES_FILE   = "prices.json"
-RAPIDAPI_KEY  = os.environ.get("RAPIDAPI_KEY", "")
+RAPIDAPI_KEY   = os.environ.get("RAPIDAPI_KEY", "")
+SCRAPERAPI_KEY = os.environ.get("SCRAPERAPI_KEY", "")
 
 PRICE_SELECTORS = {
     "amazon":       [".a-price .a-offscreen", "#corePriceDisplay_desktop_feature_div .a-offscreen", "#price_inside_buybox", "#priceblock_ourprice", "#priceblock_dealprice"],
@@ -178,6 +179,97 @@ def scrape_costco_api(url, product_name=""):
 
     except Exception as e:
         print(f"  ❌ RapidAPI Costco error: {e}")
+        return None, None
+
+# ── WALMART CA: ScraperAPI structured product endpoint ───────────────────────
+def scrape_walmart_ca(url):
+    """Fetch Walmart CA price via ScraperAPI structured endpoint."""
+    if not SCRAPERAPI_KEY:
+        print(f"  ❌ SCRAPERAPI_KEY not set in secrets")
+        return None, None
+
+    # Extract product ID from URL e.g. walmart.ca/en/ip/name/6000202911209
+    match = re.search(r'/ip/[^/]+/(\d+)', url) or re.search(r'/(\d{10,})', url)
+    if not match:
+        print(f"  ❌ Could not extract Walmart CA product ID from URL")
+        return None, None
+
+    product_id = match.group(1)
+    print(f"  🔑 ScraperAPI Walmart CA: product ID {product_id}")
+
+    try:
+        # Try Product API first (direct lookup)
+        resp = requests.get(
+            "https://api.scraperapi.com/structured/walmart/product",
+            params={"api_key": SCRAPERAPI_KEY, "product_id": product_id, "tld": "ca"},
+            timeout=30
+        )
+        print(f"  📡 ScraperAPI status: {resp.status_code}")
+
+        if resp.status_code == 200:
+            data = resp.json()
+            print(f"  📦 Response keys: {list(data.keys())[:10]}")
+
+            price = None
+            # Try known price paths
+            for field in ["price", "salePrice", "currentPrice", "sale_price", "current_price"]:
+                val = data.get(field)
+                if val:
+                    price = extract_price_from_text(str(val))
+                    if price:
+                        print(f"  💰 [{field}]: ${price}")
+                        break
+
+            # Try nested priceInfo
+            if not price:
+                pi = data.get("priceInfo", {})
+                for field in ["price", "currentPrice", "salePrice"]:
+                    val = pi.get(field)
+                    if val:
+                        price = extract_price_from_text(str(val))
+                        if price:
+                            print(f"  💰 priceInfo[{field}]: ${price}")
+                            break
+
+            if not price:
+                print(f"  ⚠️  Price not found. Full response: {str(data)[:400]}")
+
+            in_stock = str(data.get("availability", "in stock")).lower() not in ["out of stock", "unavailable", "false"]
+            return price, in_stock
+
+        else:
+            # Fall back to search
+            print(f"  🔄 Falling back to search API...")
+            name_match = re.search(r'/ip/([^/]+)/', url)
+            query = name_match.group(1).replace("-", " ")[:50] if name_match else ""
+            if not query:
+                raise Exception("No query for fallback search")
+
+            resp2 = requests.get(
+                "https://api.scraperapi.com/structured/walmart/search",
+                params={"api_key": SCRAPERAPI_KEY, "query": query, "tld": "ca"},
+                timeout=30
+            )
+            print(f"  📡 Search fallback status: {resp2.status_code}")
+            if resp2.status_code != 200:
+                raise Exception(f"Search returned {resp2.status_code}")
+
+            data2 = resp2.json()
+            items = data2.get("items", data2.get("organic_results", []))
+            if not items:
+                print(f"  ⚠️  No search results. Response: {str(data2)[:300]}")
+                return None, None
+
+            item = items[0]
+            print(f"  🎯 Matched: {item.get('name','')[:60]}")
+            price = extract_price_from_text(str(item.get("price", "")))
+            if price:
+                print(f"  💰 Search result price: ${price}")
+            in_stock = item.get("availability", "in stock").lower() not in ["out of stock", "unavailable"]
+            return price, in_stock
+
+    except Exception as e:
+        print(f"  ❌ ScraperAPI Walmart error: {e}")
         return None, None
 
 # ── BROWSER: All other sites ──────────────────────────────────────────────────
@@ -441,10 +533,14 @@ async def main():
                 detected = detect_site(url)
                 effective_site = detected if detected != "unknown" else site_key
 
-                # ── Costco: use API directly, no browser ──────────────────
+                # ── Costco: use RapidAPI ─────────────────────────────────
                 if effective_site == "costco":
                     print(f"  🏪 Costco — using direct API (no browser)")
                     price, in_stock = scrape_costco_api(url, product["name"])
+                # ── Walmart CA: use ScraperAPI ────────────────────────────
+                elif effective_site == "walmart":
+                    print(f"  🛒 Walmart CA — using ScraperAPI")
+                    price, in_stock = scrape_walmart_ca(url)
                 else:
                     # ── All other sites: use browser ──────────────────────
                     context = await browser.new_context(
