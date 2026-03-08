@@ -33,6 +33,7 @@ jobs:
           PROXY_USERNAME: ${{ secrets.PROXY_USERNAME }}
           PROXY_PASSWORD: ${{ secrets.PROXY_PASSWORD }}
           RAPIDAPI_KEY:   ${{ secrets.RAPIDAPI_KEY }}
+          SCRAPERAPI_KEY: ${{ secrets.SCRAPERAPI_KEY }}
         run: python scrape.py
 
       - name: Commit updated prices.json
