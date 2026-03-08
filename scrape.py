@@ -239,29 +239,37 @@ async def scrape_price_browser(page, url, site):
             except:
                 continue
 
-        # Step 1b: Walmart NEXT_DATA
+        # Step 1b: Walmart — extract from __NEXT_DATA__ JSON blob
         if not price and site == "walmart":
             try:
-                raw = await page.eval_on_selector("script#__NEXT_DATA__", "el => el.textContent")
-                nd = json.loads(raw)
-                # Walk common paths
-                for path in [
-                    ["props","pageProps","initialData","data","product","priceInfo","currentPrice","price"],
-                    ["props","pageProps","initialData","data","product","priceInfo","wasPrice","price"],
-                    ["props","pageProps","initialData","data","product","buyBox","currentPrice"],
-                ]:
-                    try:
-                        val = nd
-                        for key in path:
-                            val = val[key]
-                        if val:
+                # Try to get __NEXT_DATA__ from already-loaded page
+                raw = await page.evaluate("""() => {
+                    const el = document.getElementById('__NEXT_DATA__');
+                    return el ? el.textContent : null;
+                }""")
+                if not raw:
+                    # Wait a bit more and try again
+                    await page.wait_for_timeout(4000)
+                    raw = await page.evaluate("""() => {
+                        const el = document.getElementById('__NEXT_DATA__');
+                        return el ? el.textContent : null;
+                    }""")
+                if raw:
+                    nd = json.loads(raw)
+                    pi = nd.get("props",{}).get("pageProps",{}).get("initialData",{}).get("data",{}).get("product",{}).get("priceInfo",{})
+                    print(f"  🔍 Walmart priceInfo keys: {list(pi.keys())[:10]}")
+                    for field in ["currentPrice","salePrice","priceRange","wasPrice"]:
+                        val = pi.get(field,{})
+                        if isinstance(val, dict):
+                            p = extract_price_from_text(str(val.get("price") or val.get("min") or ""))
+                        else:
                             p = extract_price_from_text(str(val))
-                            if p:
-                                price = p
-                                print(f"  💰 Walmart NEXT_DATA: ${price}")
-                                break
-                    except (KeyError, TypeError):
-                        continue
+                        if p:
+                            price = p
+                            print(f"  💰 Walmart NEXT_DATA [{field}]: ${price}")
+                            break
+                else:
+                    print(f"  ⚠️  Walmart __NEXT_DATA__ not found in page")
             except Exception as we:
                 print(f"  ⚠️  Walmart NEXT_DATA parse failed: {we}")
 
