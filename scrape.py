@@ -125,7 +125,7 @@ def scrape_costco_api(url, product_name=""):
 
         # Build smarter search query — skip leading non-alpha tokens, take up to 4 meaningful words
         import re as _re
-        words = [w for w in product_name.split() if _re.search(r'[a-zA-Z]{3,}', w)]
+        words = [w for w in product_name.split() if _re.search(r'[a-zA-Z]{3,}', w) and not _re.match(r'\d+(st|nd|rd|th)', w, _re.I)]
         short_query_fixed = " ".join(words[:4]) if words else product_name[:30]
         print(f"  🔎 Search query used: {short_query_fixed}")
 
@@ -188,8 +188,10 @@ def scrape_walmart_ca(url):
         print(f"  ❌ SCRAPERAPI_KEY not set in secrets")
         return None, None
 
-    # Extract product ID from URL e.g. walmart.ca/en/ip/name/6000202911209
-    match = re.search(r'/ip/[^/]+/(\d+)', url) or re.search(r'/(\d{10,})', url)
+    # Extract product ID from URL e.g. walmart.ca/en/ip/name/6000202911209 or /472EWTMH6JS9
+    # Strip query string first
+    clean_url = url.split("?")[0]
+    match = re.search(r'/ip/[^/]+/([A-Z0-9]{8,})', clean_url) or re.search(r'/([A-Z0-9]{8,})(?:/|$)', clean_url)
     if not match:
         print(f"  ❌ Could not extract Walmart CA product ID from URL")
         return None, None
