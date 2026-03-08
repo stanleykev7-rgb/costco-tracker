@@ -239,6 +239,32 @@ async def scrape_price_browser(page, url, site):
             except:
                 continue
 
+        # Step 1b: Walmart NEXT_DATA
+        if not price and site == "walmart":
+            try:
+                raw = await page.eval_on_selector("script#__NEXT_DATA__", "el => el.textContent")
+                nd = json.loads(raw)
+                # Walk common paths
+                for path in [
+                    ["props","pageProps","initialData","data","product","priceInfo","currentPrice","price"],
+                    ["props","pageProps","initialData","data","product","priceInfo","wasPrice","price"],
+                    ["props","pageProps","initialData","data","product","buyBox","currentPrice"],
+                ]:
+                    try:
+                        val = nd
+                        for key in path:
+                            val = val[key]
+                        if val:
+                            p = extract_price_from_text(str(val))
+                            if p:
+                                price = p
+                                print(f"  💰 Walmart NEXT_DATA: ${price}")
+                                break
+                    except (KeyError, TypeError):
+                        continue
+            except Exception as we:
+                print(f"  ⚠️  Walmart NEXT_DATA parse failed: {we}")
+
         # Step 2: JSON-LD
         if not price:
             try:
@@ -393,7 +419,13 @@ async def main():
                 url = site_info.get("url")
                 if url and not url.startswith("http"):
                     url = "https://" + url
-                    site_info["url"] = url
+                # Clean Amazon URLs to just https://www.amazon.ca/dp/ASIN
+                if "amazon.ca" in url:
+                    asin_match = re.search(r'/dp/([A-Z0-9]{10})', url)
+                    if asin_match:
+                        url = f"https://www.amazon.ca/dp/{asin_match.group(1)}"
+                        print(f"  🧹 Cleaned Amazon URL: {url}")
+                site_info["url"] = url
                 if not url:
                     print(f"  ⏭️  No URL for {site_key}")
                     continue
