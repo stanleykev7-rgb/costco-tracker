@@ -21,7 +21,7 @@ RAPIDAPI_KEY  = os.environ.get("RAPIDAPI_KEY", "")
 
 PRICE_SELECTORS = {
     "amazon":       [".a-price .a-offscreen", "#corePriceDisplay_desktop_feature_div .a-offscreen", "#price_inside_buybox", "#priceblock_ourprice", "#priceblock_dealprice"],
-    "walmart":      ["[itemprop='price']", "[data-automation='buybox-price']", ".price-characteristic", ".prod-PriceHero [class*='price']"],
+    "walmart":      ["[itemprop='price']", "[data-automation='buybox-price']", ".price-characteristic", ".prod-PriceHero [class*='price']", "[data-testid='price-wrap'] [class*='price']", ".price-group", "span[class*='price_']", "[class*='prod-Price']", "[data-automation='product-price']"],
     "bestbuy":      ["[data-automation='product-price']", ".priceUpdate", ".price_FHDfG", ".productPrice"],
     "canadiantire": ["[data-testid='product-price']", ".price-display__content", ".price__reg", "[class*='price__value']"],
     "staples":      [".price-box .price", "[data-price]", ".our-price", "[itemprop='price']"],
@@ -121,7 +121,27 @@ def scrape_costco_api(url, product_name=""):
         # Find matching product in results by product_id
         # Response is nested: data["data"]["products"]
         inner = data.get("data", data)
+
+        # Build smarter search query — skip leading non-alpha tokens, take up to 4 meaningful words
+        import re as _re
+        words = [w for w in product_name.split() if _re.search(r'[a-zA-Z]{3,}', w)]
+        short_query_fixed = " ".join(words[:4]) if words else product_name[:30]
+        print(f"  🔎 Search query used: {short_query_fixed}")
+
+        # Re-search if original query returned 0 results
         results = inner.get("products") or inner.get("results") or inner.get("items") or data.get("products") or []
+        if not results and short_query_fixed != " ".join(product_name.split()[:4]):
+            retry = requests.get(
+                "https://real-time-costco-data.p.rapidapi.com/search",
+                headers={"x-rapidapi-host": "real-time-costco-data.p.rapidapi.com", "x-rapidapi-key": RAPIDAPI_KEY},
+                params={"query": short_query_fixed, "country": "CA", "language": "en-CA", "start": "0"},
+                timeout=20
+            )
+            if retry.status_code == 200:
+                inner2 = retry.json().get("data", {})
+                results = inner2.get("products") or []
+                print(f"  🔄 Retry results: {inner2.get('total_products', len(results))}")
+
         print(f"  📋 Results count: {inner.get('total_products', len(results))}")
         if isinstance(results, list) and results:
             # Try to match by product_id first, fall back to first result
