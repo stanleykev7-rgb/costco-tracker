@@ -1,5 +1,9 @@
 {
+<<<<<<< Updated upstream
   "last_updated": "2026-03-08T05:02:55.684016+00:00",
+=======
+  "last_updated": "2026-03-08T05:03:04.798879+00:00",
+>>>>>>> Stashed changes
   "products": [
     {
       "id": "1772904963562",
@@ -15,9 +19,9 @@
           "was": null,
           "in_stock": true,
           "history": [],
-          "last_checked": "2026-03-07T17:46:20.655529+00:00",
+          "last_checked": "2026-03-08T05:02:57.237900+00:00",
           "error": "Price not found",
-          "scrape_count": 1
+          "scrape_count": 2
         }
       },
       "rfd_deal": null,
