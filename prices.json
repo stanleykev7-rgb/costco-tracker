@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-03-08T18:37:31.712697+00:00",
+  "last_updated": "2026-03-08T18:45:14.208126+00:00",
   "products": [
     {
       "id": "1772973443707",
@@ -82,39 +82,39 @@
               "p": 298.99
             }
           ],
-          "last_checked": "2026-03-08T18:36:59.189378+00:00",
+          "last_checked": "2026-03-08T18:44:26.226564+00:00",
           "error": null,
-          "scrape_count": 1
+          "scrape_count": 2
         },
         "amazon": {
           "url": "https://www.amazon.ca/dp/B0FQG8RW95",
-          "price": 298.99,
-          "was": null,
-          "in_stock": false,
+          "price": null,
+          "was": 298.99,
+          "in_stock": null,
           "history": [
             {
               "d": "Mar 8",
               "p": 298.99
             }
           ],
-          "last_checked": "2026-03-08T18:37:15.023402+00:00",
-          "error": null,
-          "scrape_count": 1
+          "last_checked": "2026-03-08T18:44:59.119951+00:00",
+          "error": "Price not found",
+          "scrape_count": 2
         },
         "walmart": {
           "url": "https://www.walmart.ca/en/ip/airpods-pro-3/472EWTMH6JS9?icid=search_page_electronics_airpods_pro_3_151831_CD25FZ887N",
-          "price": 26.98,
-          "was": null,
+          "price": 298.99,
+          "was": 26.98,
           "in_stock": true,
           "history": [
             {
               "d": "Mar 8",
-              "p": 26.98
+              "p": 298.99
             }
           ],
-          "last_checked": "2026-03-08T18:37:25.286570+00:00",
+          "last_checked": "2026-03-08T18:45:06.764030+00:00",
           "error": null,
-          "scrape_count": 1
+          "scrape_count": 2
         }
       },
       "rfd_deal": null,
