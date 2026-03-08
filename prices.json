@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-03-08T17:29:13.447695+00:00",
+  "last_updated": "2026-03-08T18:26:10.397865+00:00",
   "products": [
     {
       "id": "1772973443707",
@@ -22,9 +22,9 @@
               "p": 99.99
             }
           ],
-          "last_checked": "2026-03-08T17:28:04.633152+00:00",
+          "last_checked": "2026-03-08T18:25:06.709580+00:00",
           "error": null,
-          "scrape_count": 3
+          "scrape_count": 4
         },
         "amazon": {
           "url": "https://www.amazon.ca/dp/B000QSTBNS",
@@ -37,19 +37,24 @@
               "p": 129.99
             }
           ],
-          "last_checked": "2026-03-08T17:28:50.214285+00:00",
+          "last_checked": "2026-03-08T18:25:51.043623+00:00",
           "error": null,
-          "scrape_count": 3
+          "scrape_count": 4
         },
         "walmart": {
           "url": "https://www.walmart.ca/en/ip/100-gold-standard-whey-double-rich-chocolate-5lb-unisex/6000201352971?classType=REGULAR&from=/search",
-          "price": null,
+          "price": 129.98,
           "was": null,
           "in_stock": true,
-          "history": [],
-          "last_checked": "2026-03-08T17:29:06.202768+00:00",
-          "error": "Price not found",
-          "scrape_count": 3
+          "history": [
+            {
+              "d": "Mar 8",
+              "p": 129.98
+            }
+          ],
+          "last_checked": "2026-03-08T18:26:04.059602+00:00",
+          "error": null,
+          "scrape_count": 4
         }
       },
       "rfd_deal": null,
