@@ -1,32 +1,4 @@
 {
-<<<<<<< Updated upstream
-  "last_updated": "2026-03-08T05:02:55.684016+00:00",
-=======
-  "last_updated": "2026-03-08T05:03:04.798879+00:00",
->>>>>>> Stashed changes
-  "products": [
-    {
-      "id": "1772904963562",
-      "name": "Optimum Nutrition Gold Standard 100% Whey",
-      "category": "Protein",
-      "sites_to_track": [
-        "costco"
-      ],
-      "site_data": {
-        "costco": {
-          "url": "https://www.costco.ca/optimum-nutrition-gold-standard-100-whey-protein-extreme-chocolate-shake-256-kg.product.4000077852.html",
-          "price": null,
-          "was": null,
-          "in_stock": true,
-          "history": [],
-          "last_checked": "2026-03-08T05:02:57.237900+00:00",
-          "error": "Price not found",
-          "scrape_count": 2
-        }
-      },
-      "rfd_deal": null,
-      "paused": false,
-      "added_at": "2026-03-07T17:36:03.563Z"
-    }
-  ]
+  "last_updated": null,
+  "products": []
 }
