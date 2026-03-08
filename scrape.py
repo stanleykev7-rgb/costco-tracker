@@ -133,10 +133,11 @@ def scrape_costco_api(url, product_name=""):
             print(f"  🔑 Product fields: {[k for k in match.keys() if 'price' in k.lower() or 'cost' in k.lower() or 'sale' in k.lower()]}")
 
             for field in [
-                "item_price", "item_sale_price", "item_your_price",
-                "price", "salePrice", "yourPrice", "finalPrice",
-                "current_price", "sale_price", "your_price",
-                "item_final_price", "item_current_price",
+                "item_location_pricing_salePrice",
+                "item_location_pricing_listPrice",
+                "item_location_pricing_pricePerUnit_price",
+                "minSalePrice", "maxSalePrice",
+                "item_price", "price", "salePrice",
             ]:
                 val = match.get(field)
                 if val:
