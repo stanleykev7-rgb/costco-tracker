@@ -193,6 +193,31 @@ async def scrape_price_browser(page, url, site):
 
         price = None
 
+        # Step 0: Walmart __NEXT_DATA__ JSON blob (most reliable)
+        if site == "walmart":
+            try:
+                next_data = await page.eval_on_selector(
+                    'script#__NEXT_DATA__',
+                    'el => el.textContent'
+                )
+                if next_data:
+                    blob = json.loads(next_data)
+                    product_raw = blob["props"]["pageProps"]["initialData"]["data"]["product"]
+                    raw_price = (
+                        product_raw.get("priceInfo", {}).get("currentPrice", {}).get("price") or
+                        product_raw.get("priceInfo", {}).get("wasPrice", {}).get("price") or
+                        product_raw.get("price") or
+                        product_raw.get("salePrice")
+                    )
+                    if raw_price:
+                        price = extract_price_from_text(str(raw_price))
+                        if price:
+                            print(f"  💰 Walmart __NEXT_DATA__: ${price}")
+                    avail = str(product_raw.get("availabilityStatus","")).lower()
+                    in_stock = avail not in ["out_of_stock","out of stock","unavailable"]
+            except Exception as we:
+                print(f"  ⚠️  Walmart NEXT_DATA parse failed: {we}")
+
         # Step 1: CSS selectors
         for sel in PRICE_SELECTORS.get(site, []):
             try:
@@ -261,7 +286,30 @@ async def scrape_price_browser(page, url, site):
                     except: continue
                 if price: break
 
-        # Step 5: Debug dump if still nothing
+        # Step 5: Walmart-specific fallback
+        if not price and site == "walmart":
+            try:
+                await page.evaluate("window.scrollBy(0, 800)")
+                await page.wait_for_timeout(3000)
+                aria = await page.eval_on_selector_all("[aria-label*='$'], [aria-label*='current price']", "els => els.map(e => e.getAttribute('aria-label'))")
+                for a in aria:
+                    if a:
+                        p = extract_price_from_text(a)
+                        if p:
+                            price = p
+                            print(f"  💰 Walmart aria-label: ${price}")
+                            break
+                if not price:
+                    metas = await page.eval_on_selector_all("[itemprop='price']", "els => els.map(e => e.getAttribute('content') || e.textContent)")
+                    for m in metas:
+                        p = extract_price_from_text(str(m))
+                        if p:
+                            price = p
+                            print(f"  💰 Walmart itemprop: ${price}")
+                            break
+            except: pass
+
+        # Step 6: Debug dump if still nothing
         if not price:
             print(f"  ❌ Price not found — page elements with $:")
             try:
@@ -272,6 +320,9 @@ async def scrape_price_browser(page, url, site):
                 """)
                 for s in snippets:
                     print(f"    📄 {s}")
+                if not snippets:
+                    title = await page.title()
+                    print(f"    📄 Page title: {title}")
             except: pass
 
         content = await page.content()
