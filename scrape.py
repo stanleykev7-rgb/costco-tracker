@@ -119,14 +119,25 @@ def scrape_costco_api(url, product_name=""):
         in_stock = True
 
         # Find matching product in results by product_id
-        results = data.get("products") or data.get("results") or data.get("items") or []
+        # Response is nested: data["data"]["products"]
+        inner = data.get("data", data)
+        results = inner.get("products") or inner.get("results") or inner.get("items") or data.get("products") or []
+        print(f"  📋 Results count: {inner.get('total_products', len(results))}")
         if isinstance(results, list) and results:
             # Try to match by product_id first, fall back to first result
             match = next((r for r in results if str(r.get("product_id","")) == str(product_id)), results[0])
             print(f"  🎯 Matched: {match.get('title','')[:60]}")
 
             # Try all known price fields
-            for field in ["price","salePrice","yourPrice","finalPrice","current_price","sale_price"]:
+            # Print all fields for debugging
+            print(f"  🔑 Product fields: {[k for k in match.keys() if 'price' in k.lower() or 'cost' in k.lower() or 'sale' in k.lower()]}")
+
+            for field in [
+                "item_price", "item_sale_price", "item_your_price",
+                "price", "salePrice", "yourPrice", "finalPrice",
+                "current_price", "sale_price", "your_price",
+                "item_final_price", "item_current_price",
+            ]:
                 val = match.get(field)
                 if val:
                     price = extract_price_from_text(str(val))
@@ -134,9 +145,11 @@ def scrape_costco_api(url, product_name=""):
                         print(f"  💰 [{field}]: ${price}")
                         break
 
-            # Stock
-            stock_val = str(match.get("inStock", match.get("in_stock", "true"))).lower()
-            in_stock = stock_val not in ["false", "0", "out of stock"]
+            if not price:
+                print(f"  ⚠️  All fields: {dict(list(match.items())[:20])}")
+
+            # Stock — Costco uses item_disponzeroinv (true = zero inventory = out of stock)
+            in_stock = not match.get("item_disponzeroinv", False)
         else:
             print(f"  ⚠️  No results found. Full response: {json.dumps(data)[:500]}")
 
