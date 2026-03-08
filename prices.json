@@ -60,6 +60,51 @@
       "rfd_deal": null,
       "paused": true,
       "added_at": "2026-03-08T12:37:23.707Z"
+    },
+    {
+      "id": "1772994979108",
+      "name": "Apple AirPods Pro 3rd Generation",
+      "category": "Protein",
+      "sites_to_track": [
+        "costco",
+        "amazon",
+        "walmart"
+      ],
+      "site_data": {
+        "costco": {
+          "url": "https://www.costco.ca/apple-airpods-pro-3rd-generation-with-magsafe-charging-case-usb-c.product.4000403964.html",
+          "price": null,
+          "was": null,
+          "in_stock": null,
+          "history": [],
+          "last_checked": null,
+          "error": null,
+          "scrape_count": 0
+        },
+        "amazon": {
+          "url": "https://www.amazon.ca/Apple-Cancellation-Translation-Headphones-High-Fidelity/dp/B0FQG8RW95/ref=sr_1_1?crid=2VRG7JT3I91RS&dib=eyJ2IjoiMSJ9.40QOuBf1tE8-H8swaRHZUZf3CH9Z3mKDOsDAUR8u-dSlHsX6kysIlSAUf8K5EiiXHRQQrzQUGCpCRPHmovjV_aiyacfc26-64ykXMVbgxS9XnaRk8mOho1vnN039TY_K55cVp73lnK1t4ZkrOjVyye8DyeelFvnJ9klE8nFkIxPSDk-Lnr05MxwEihJFzXMIfbk-o44HnCSB4U2YoqFOc9tvDU4M6cYeDG4nycG0cdUOljCH7Qy64gRkFXm1Ugr7k1RbLITC6nikQMXysGZdp-JYF9sZqYIaagdPrC2FdHg.RRfUNke_4veic0K2bIkU1C2wj6T8mFUWQWMKLJhJuYA&dib_tag=se&keywords=Apple%2BAirPods%2BPro%2B3rd%2BGeneration&qid=1772994899&sprefix=apple%2Bairpods%2Bpro%2B3rd%2Bgeneration%2Caps%2C482&sr=8-1&th=1",
+          "price": null,
+          "was": null,
+          "in_stock": null,
+          "history": [],
+          "last_checked": null,
+          "error": null,
+          "scrape_count": 0
+        },
+        "walmart": {
+          "url": "https://www.walmart.ca/en/ip/airpods-pro-3/472EWTMH6JS9?icid=search_page_electronics_airpods_pro_3_151831_CD25FZ887N",
+          "price": null,
+          "was": null,
+          "in_stock": null,
+          "history": [],
+          "last_checked": null,
+          "error": null,
+          "scrape_count": 0
+        }
+      },
+      "rfd_deal": null,
+      "paused": false,
+      "added_at": "2026-03-08T18:36:19.108Z"
     }
   ]
 }
