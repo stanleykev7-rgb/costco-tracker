@@ -105,7 +105,10 @@ def scrape_costco_api(url, product_name=""):
                 "x-rapidapi-host": "real-time-costco-data.p.rapidapi.com",
                 "x-rapidapi-key": RAPIDAPI_KEY,
             },
-            params={"query": product_name, "country": "CA", "language": "en-CA", "start": "0"},
+            # Shorten query to first 4 words for better search results
+        short_query = " ".join(product_name.split()[:4])
+        print(f"  🔎 Searching Costco CA for: {short_query}")
+        params={"query": short_query, "country": "CA", "language": "en-CA", "start": "0"},
             timeout=20
         )
         print(f"  📡 RapidAPI status: {resp.status_code}")
