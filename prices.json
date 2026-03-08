@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-03-08T18:26:10.397865+00:00",
+  "last_updated": "2026-03-08T18:37:31.712697+00:00",
   "products": [
     {
       "id": "1772973443707",
@@ -73,33 +73,48 @@
       "site_data": {
         "costco": {
           "url": "https://www.costco.ca/apple-airpods-pro-3rd-generation-with-magsafe-charging-case-usb-c.product.4000403964.html",
-          "price": null,
+          "price": 298.99,
           "was": null,
-          "in_stock": null,
-          "history": [],
-          "last_checked": null,
+          "in_stock": false,
+          "history": [
+            {
+              "d": "Mar 8",
+              "p": 298.99
+            }
+          ],
+          "last_checked": "2026-03-08T18:36:59.189378+00:00",
           "error": null,
-          "scrape_count": 0
+          "scrape_count": 1
         },
         "amazon": {
-          "url": "https://www.amazon.ca/Apple-Cancellation-Translation-Headphones-High-Fidelity/dp/B0FQG8RW95/ref=sr_1_1?crid=2VRG7JT3I91RS&dib=eyJ2IjoiMSJ9.40QOuBf1tE8-H8swaRHZUZf3CH9Z3mKDOsDAUR8u-dSlHsX6kysIlSAUf8K5EiiXHRQQrzQUGCpCRPHmovjV_aiyacfc26-64ykXMVbgxS9XnaRk8mOho1vnN039TY_K55cVp73lnK1t4ZkrOjVyye8DyeelFvnJ9klE8nFkIxPSDk-Lnr05MxwEihJFzXMIfbk-o44HnCSB4U2YoqFOc9tvDU4M6cYeDG4nycG0cdUOljCH7Qy64gRkFXm1Ugr7k1RbLITC6nikQMXysGZdp-JYF9sZqYIaagdPrC2FdHg.RRfUNke_4veic0K2bIkU1C2wj6T8mFUWQWMKLJhJuYA&dib_tag=se&keywords=Apple%2BAirPods%2BPro%2B3rd%2BGeneration&qid=1772994899&sprefix=apple%2Bairpods%2Bpro%2B3rd%2Bgeneration%2Caps%2C482&sr=8-1&th=1",
-          "price": null,
+          "url": "https://www.amazon.ca/dp/B0FQG8RW95",
+          "price": 298.99,
           "was": null,
-          "in_stock": null,
-          "history": [],
-          "last_checked": null,
+          "in_stock": false,
+          "history": [
+            {
+              "d": "Mar 8",
+              "p": 298.99
+            }
+          ],
+          "last_checked": "2026-03-08T18:37:15.023402+00:00",
           "error": null,
-          "scrape_count": 0
+          "scrape_count": 1
         },
         "walmart": {
           "url": "https://www.walmart.ca/en/ip/airpods-pro-3/472EWTMH6JS9?icid=search_page_electronics_airpods_pro_3_151831_CD25FZ887N",
-          "price": null,
+          "price": 26.98,
           "was": null,
-          "in_stock": null,
-          "history": [],
-          "last_checked": null,
+          "in_stock": true,
+          "history": [
+            {
+              "d": "Mar 8",
+              "p": 26.98
+            }
+          ],
+          "last_checked": "2026-03-08T18:37:25.286570+00:00",
           "error": null,
-          "scrape_count": 0
+          "scrape_count": 1
         }
       },
       "rfd_deal": null,
