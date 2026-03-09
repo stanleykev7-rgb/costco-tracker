@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-03-09T06:24:49.075602+00:00",
+  "last_updated": "2026-03-09T10:32:42.492992+00:00",
   "products": [
     {
       "id": "1773037413547",
@@ -22,24 +22,24 @@
               "p": 59.99
             }
           ],
-          "last_checked": "2026-03-09T06:24:12.413268+00:00",
+          "last_checked": "2026-03-09T10:31:53.620075+00:00",
           "error": null,
-          "scrape_count": 1
+          "scrape_count": 2
         },
         "amazon": {
           "url": "https://www.amazon.ca/dp/B09Y2MCBRZ",
-          "price": 74.99,
-          "was": null,
-          "in_stock": false,
+          "price": null,
+          "was": 74.99,
+          "in_stock": null,
           "history": [
             {
               "d": "Mar 9",
               "p": 74.99
             }
           ],
-          "last_checked": "2026-03-09T06:24:29.873676+00:00",
-          "error": null,
-          "scrape_count": 1
+          "last_checked": "2026-03-09T10:32:26.212262+00:00",
+          "error": "Price not found",
+          "scrape_count": 2
         },
         "walmart": {
           "url": "https://www.walmart.ca/en/ip/leanfit-whey-protein-chocolate-858g-100-whey-protein-powder-25g-protein-per-serving-grass-fed-gluten-free-bcaas-complete-amino-acid-profile/5NFVRYO6IZC1?classType=REGULAR&athbdg=L1102",
@@ -52,9 +52,9 @@
               "p": 42.97
             }
           ],
-          "last_checked": "2026-03-09T06:24:41.711193+00:00",
+          "last_checked": "2026-03-09T10:32:37.070167+00:00",
           "error": null,
-          "scrape_count": 1
+          "scrape_count": 2
         }
       },
       "rfd_deal": null,
