@@ -1,4 +1,50 @@
 {
   "last_updated": "2026-03-09T10:32:42.492992+00:00",
-  "products": []
+  "products": [
+    {
+      "id": "1773070128640",
+      "name": "Optimum Nutrition Gold Standard 100% Whey",
+      "category": "Protein",
+      "sites_to_track": [
+        "costco",
+        "amazon",
+        "walmart"
+      ],
+      "site_data": {
+        "costco": {
+          "url": "https://www.costco.ca/optimum-nutrition-gold-standard-100-whey-protein-extreme-chocolate-shake-256-kg.product.4000077852.html",
+          "price": null,
+          "was": null,
+          "in_stock": null,
+          "history": [],
+          "last_checked": null,
+          "error": null,
+          "scrape_count": 0
+        },
+        "amazon": {
+          "url": "https://www.amazon.ca/100-Standard-Double-Chocolate-2340g/dp/B07XRV379H/ref=sr_1_8?crid=O1683RIPLEIF&dib=eyJ2IjoiMSJ9._XR_XEkKj1Y4PPCMb0v7BR0KNQGzGfAqGxhHomFr1Vfmz3ayvj4w908ZuMuGigR8jJfPZ9XpwOiC-Adm9ghB2cYohX3bej5HC6Esn8pOr1M-hZ8uH5HefmB-kwGYD-YQQjpuxxiEohZbqct2_LSuQNooXziUQPVHSoFCWMKPu2Mxv2x6NcsAHLfZV2AQhJL6kLFcusznBIjbuOui9O2TOdiUcoBw6AqpQvCgsIqq5oViaYgX9MfjCYT67MmrJL0mj-Dbif7tpEF7jcZO_91X7BCP9Ev89z6MYgvLSnahXJI.OJ-VsC_RpRF61xSbNM8uudN5CXTFR7qF50w-dkttaSY&dib_tag=se&keywords=Optimum+Nutrition+Gold+Standard+100%25+Whey&qid=1773070062&sprefix=optimum+nutrition+gold+standard+100%25+whey%2Caps%2C699&sr=8-8",
+          "price": null,
+          "was": null,
+          "in_stock": null,
+          "history": [],
+          "last_checked": null,
+          "error": null,
+          "scrape_count": 0
+        },
+        "walmart": {
+          "url": "https://www.walmart.ca/en/ip/100-gold-standard-whey-double-rich-chocolate-5lb-unisex/6000201352971?classType=REGULAR&from=/search",
+          "price": null,
+          "was": null,
+          "in_stock": null,
+          "history": [],
+          "last_checked": null,
+          "error": null,
+          "scrape_count": 0
+        }
+      },
+      "rfd_deal": null,
+      "paused": false,
+      "added_at": "2026-03-09T15:28:48.640Z"
+    }
+  ]
 }
