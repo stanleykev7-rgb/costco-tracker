@@ -125,7 +125,8 @@ def scrape_costco_api(url, product_name=""):
 
         # Build smarter search query — skip leading non-alpha tokens, take up to 4 meaningful words
         import re as _re
-        words = [w for w in product_name.split() if _re.search(r'[a-zA-Z]{3,}', w) and not _re.match(r'\d+(st|nd|rd|th)', w, _re.I)]
+        skip = {"generation","edition","series","version","model","pack","bundle","set","new","the","and","for","with"}
+        words = [w for w in product_name.split() if _re.search(r'[a-zA-Z]{3,}', w) and not _re.match(r'\d+(st|nd|rd|th)', w, _re.I) and w.lower() not in skip]
         short_query_fixed = " ".join(words[:4]) if words else product_name[:30]
         print(f"  🔎 Search query used: {short_query_fixed}")
 
