@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read   # read-only — this workflow NEVER writes to the repo
 
 jobs:
   monitor:
@@ -28,18 +28,9 @@ jobs:
 
       - name: Run RFD monitor
         env:
-          GH_PAT:              ${{ secrets.GH_PAT }}
-          GITHUB_REPOSITORY:   ${{ github.repository }}
+          GH_PAT:            ${{ secrets.GH_PAT }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
         run: python rfd_monitor.py
 
-      - name: Commit updated prices.json
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add prices.json
-          git stash
-          git pull --rebase origin main
-          git stash pop || true
-          git add prices.json
-          git diff --cached --quiet || git commit -m "chore: rfd check $(date -u '+%Y-%m-%d %H:%M UTC')"
-          git push
+      # NO git commit step — rfd_monitor.py never writes prices.json.
+      # scrape.py is the single writer, preventing JSON corruption.
