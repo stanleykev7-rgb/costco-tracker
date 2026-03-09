@@ -1,4 +1,50 @@
 {
   "last_updated": null,
-  "products": []
+  "products": [
+    {
+      "id": "1773037413547",
+      "name": "Leanfit Sport Whey Isolate",
+      "category": "Protein",
+      "sites_to_track": [
+        "costco",
+        "amazon",
+        "walmart"
+      ],
+      "site_data": {
+        "costco": {
+          "url": "https://www.costco.ca/leanfit-sport-whey-isolate-unflavoured-2-kg.product.4000384104.html",
+          "price": null,
+          "was": null,
+          "in_stock": null,
+          "history": [],
+          "last_checked": null,
+          "error": null,
+          "scrape_count": 0
+        },
+        "amazon": {
+          "url": "https://www.amazon.ca/LEANFIT-Grass-Fed-ISOLATE-Keto-Friendly-Servings/dp/B09Y2MCBRZ/ref=sr_1_5?crid=1IR88BR3D4KKX&dib=eyJ2IjoiMSJ9.f9Dq0JrLUQMpDaBXULp89K-9GkaqM9fHyFjWoqj06PbQhxuoAmzWbA-RevmNC1Eegskw_l3rqZmYK6TNyDsnDvLGXgE13Gl33OFGFkLZuCa55-9ouVmMTrxBE3APPpkgbkLUQxvILgQXci8uwgwCC1bWK22UbmX3j7cXTVC9ocLjdnBc_YjojyH_vJTS1aeptpuIa9WJkA6AUPRhEA2eLhiiY8CAg5j2Kf8VErUdGCtOFQ8-bjnb7N_ZodLe1mRnoGLshdXKqgoMQPKjbbTp12XPs7y8OL1qcx8-S2A3wAE.AGDbzD4PWEVKbQsttmR2i_mNf_HqtyMKRYAvOHVlzl0&dib_tag=se&keywords=Leanfit%2BSport%2BWhey%2BIsolate&qid=1773037139&sprefix=leanfit%2Bsport%2Bwhey%2Bisolate%2Caps%2C328&sr=8-5&th=1",
+          "price": null,
+          "was": null,
+          "in_stock": null,
+          "history": [],
+          "last_checked": null,
+          "error": null,
+          "scrape_count": 0
+        },
+        "walmart": {
+          "url": "https://www.walmart.ca/en/ip/leanfit-whey-protein-chocolate-858g-100-whey-protein-powder-25g-protein-per-serving-grass-fed-gluten-free-bcaas-complete-amino-acid-profile/5NFVRYO6IZC1?classType=REGULAR&athbdg=L1102",
+          "price": null,
+          "was": null,
+          "in_stock": null,
+          "history": [],
+          "last_checked": null,
+          "error": null,
+          "scrape_count": 0
+        }
+      },
+      "rfd_deal": null,
+      "paused": false,
+      "added_at": "2026-03-09T06:23:33.547Z"
+    }
+  ]
 }
