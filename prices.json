@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-03-20T05:08:36.465281+00:00",
+  "last_updated": "2026-03-20T05:41:31.216450+00:00",
   "products": [
     {
       "id": "1773070128640",
@@ -28,16 +28,20 @@
             {
               "d": "Mar 11",
               "p": 99.99
+            },
+            {
+              "d": "Mar 20",
+              "p": 99.99
             }
           ],
-          "last_checked": "2026-03-11T10:08:55.933064+00:00",
+          "last_checked": "2026-03-20T05:40:29.441981+00:00",
           "error": null,
-          "scrape_count": 7
+          "scrape_count": 8
         },
         "amazon": {
           "url": "https://www.amazon.ca/dp/B07XRV379H",
-          "price": 129.99,
-          "was": null,
+          "price": 124.99,
+          "was": 129.99,
           "in_stock": false,
           "history": [
             {
@@ -51,16 +55,20 @@
             {
               "d": "Mar 11",
               "p": 129.99
+            },
+            {
+              "d": "Mar 20",
+              "p": 124.99
             }
           ],
-          "last_checked": "2026-03-11T10:09:09.507302+00:00",
+          "last_checked": "2026-03-20T05:41:13.464171+00:00",
           "error": null,
-          "scrape_count": 7
+          "scrape_count": 8
         },
         "walmart": {
           "url": "https://www.walmart.ca/en/ip/100-gold-standard-whey-double-rich-chocolate-5lb-unisex/6000201352971?classType=REGULAR&from=/search",
-          "price": 129.98,
-          "was": 129.08,
+          "price": 119.99,
+          "was": 129.98,
           "in_stock": true,
           "history": [
             {
@@ -74,11 +82,15 @@
             {
               "d": "Mar 11",
               "p": 129.98
+            },
+            {
+              "d": "Mar 20",
+              "p": 119.99
             }
           ],
-          "last_checked": "2026-03-11T10:09:27.697995+00:00",
+          "last_checked": "2026-03-20T05:41:24.595918+00:00",
           "error": null,
-          "scrape_count": 7
+          "scrape_count": 8
         }
       },
       "rfd_deal": null,
