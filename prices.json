@@ -94,7 +94,7 @@
         }
       },
       "rfd_deal": null,
-      "paused": true,
+      "paused": false,
       "added_at": "2026-03-09T15:28:48.640Z"
     }
   ]
