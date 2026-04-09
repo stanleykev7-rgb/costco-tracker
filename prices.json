@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-04-09T02:40:33.541888+00:00",
+  "last_updated": "2026-04-09T08:26:02.661524+00:00",
   "products": [
     {
       "id": "1773070128640",
@@ -13,8 +13,8 @@
       "site_data": {
         "costco": {
           "url": "https://www.costco.ca/optimum-nutrition-gold-standard-100-whey-protein-extreme-chocolate-shake-256-kg.product.4000077852.html",
-          "price": 99.99,
-          "was": null,
+          "price": 109.99,
+          "was": 99.99,
           "in_stock": true,
           "history": [
             {
@@ -32,11 +32,15 @@
             {
               "d": "Mar 20",
               "p": 99.99
+            },
+            {
+              "d": "Apr 9",
+              "p": 109.99
             }
           ],
-          "last_checked": "2026-03-20T10:04:30.582097+00:00",
+          "last_checked": "2026-04-09T08:25:05.895677+00:00",
           "error": null,
-          "scrape_count": 9
+          "scrape_count": 10
         },
         "amazon": {
           "url": "https://www.amazon.ca/dp/B07XRV379H",
@@ -61,14 +65,14 @@
               "p": 124.99
             }
           ],
-          "last_checked": "2026-03-20T10:05:03.242561+00:00",
+          "last_checked": "2026-04-09T08:25:49.943758+00:00",
           "error": "Price not found",
-          "scrape_count": 9
+          "scrape_count": 10
         },
         "walmart": {
           "url": "https://www.walmart.ca/en/ip/100-gold-standard-whey-double-rich-chocolate-5lb-unisex/6000201352971?classType=REGULAR&from=/search",
-          "price": 119.99,
-          "was": 129.98,
+          "price": 125.99,
+          "was": 119.99,
           "in_stock": true,
           "history": [
             {
@@ -86,11 +90,15 @@
             {
               "d": "Mar 20",
               "p": 119.99
+            },
+            {
+              "d": "Apr 9",
+              "p": 125.99
             }
           ],
-          "last_checked": "2026-03-20T10:05:07.740459+00:00",
+          "last_checked": "2026-04-09T08:25:55.268942+00:00",
           "error": null,
-          "scrape_count": 9
+          "scrape_count": 10
         }
       },
       "rfd_deal": null,
